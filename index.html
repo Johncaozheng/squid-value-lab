@@ -708,7 +708,12 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
   function settle_round(counts) {
     const jackpot_winner = counts.findIndex((count) => count >= JACKPOT_THRESHOLD);
     if (jackpot_winner >= 0) {
-      return counts.map((_, seat) => (seat === jackpot_winner ? (NUM_PLAYERS - 1) * JACKPOT_PER_PLAYER : -JACKPOT_PER_PLAYER));
+      // corrected rule (John, 2026-10-03): only the zero-squid players pay the jackpot; holders pay nothing
+      const zero_squid_players = players_without_squid(counts);
+      return counts.map((count, seat) => {
+        if (seat === jackpot_winner) return JACKPOT_PER_PLAYER * zero_squid_players;
+        return count === 0 ? -JACKPOT_PER_PLAYER : 0;
+      });
     }
     if (players_without_squid(counts) === 1 || sum(counts) === TOTAL_SQUIDS) return settlement_payoffs(counts);
     return null;
@@ -1070,7 +1075,7 @@ const STRINGS = {
     language_label: "Language",
     lang_en: "EN",
     lang_zh: "中文",
-    real_money: "A fresh pot carries ~{ante} ≈ {chips} of squid value, about {multiple}× the 75 chips of blinds. At settlement each player on 0 pays 100 chips per squid to every holder; the jackpot is 1,000 chips from each of the other 7.",
+    real_money: "A fresh pot carries ~{ante} ≈ {chips} of squid value, about {multiple}× the 75 chips of blinds. At settlement each player on 0 pays 100 chips per squid to every holder; the jackpot is 1,000 chips from each player still on 0 (up to 7,000) — holders pay nothing.",
 
     table_title: "Table",
     mode_aria: "What a tap on a seat changes",
@@ -1238,12 +1243,12 @@ const STRINGS = {
     tut3_fill: "Holders have 1 or 2 squids each; nobody is near the jackpot.",
 
     tut4_title: "The jackpot pull",
-    tut4_lead: "On 4 squids, winning the pot is my 5th: 1,000 from each of the other 7 at once, so V(I win) = {value_if_i_win}. If someone else wins it, I still reach 5 later in {p_later} of rounds, so my average stays high at {value_if_opponent_wins}. The ante is the gap: {ante}.",
+    tut4_lead: "On 4 squids, winning the pot is my 5th: every player still on 0 pays 1,000 at once, so V(I win) = {value_if_i_win}. If someone else wins it, I still reach 5 later in {p_later} of rounds, so my average stays high at {value_if_opponent_wins}. The ante is the gap: {ante}.",
     tut4_bar_win: "V(I win)",
     tut4_bar_opponent: "Average if an opponent wins",
     tut4_bar_ante: "Implicit ante",
-    tut4_villain_lead: "Now flip it: a villain is on 4 and I am on 0. My own ante drops to {ante} (fresh round: {ante_fresh}), but if he wins this pot I lose {denial} more than if an average opponent wins it. That gap is the denial cost.",
-    tut4_shared: "Every other player shares that interest: we would all rather a third player win the pot than him. So the game is no longer zero-sum between two players, and pots with the player on 4 in them play differently.",
+    tut4_villain_lead: "Now flip it: a villain is on 4 and I am on 0. My own ante jumps to {ante} (fresh round: {ante_fresh}), because my first squid would also buy immunity from his jackpot; but if he wins this pot I still lose {denial} more than if an average opponent wins it. That gap is the denial cost.",
+    tut4_shared: "The players who share that interest most are the ones still on 0: a holder is already immune, so only the zero-squid players stand to pay his jackpot, and your first squid is insurance against being one of them. So the game is no longer zero-sum between two players, and pots with the player on 4 in them play differently depending on who still holds nothing.",
     tut4_bar_villain: "V(he wins)",
 
     tut5_title: "Formula sheet",
@@ -1272,7 +1277,7 @@ const STRINGS = {
     tut6_title: "How to think about it at the table",
     tut6_insurance: "<b>Early pots are insurance.</b> A fresh pot carries {ante}, about {blinds_multiple}× the blinds, mostly because winning it cuts your chance of finishing on 0 from {p_now} to {p_win}.",
     tut6_last: "<b>Two of you left on 0: the pot is worth more than the penalty.</b> With 9 out it is worth {swing}: you dodge the {avoided} payment and collect {collected}.",
-    tut6_villain: "<b>Someone on 4: your own ante drops, but you hate him winning.</b> On 0 squids your ante is {ante}, and you lose another {denial} if he is the one who takes it.",
+    tut6_villain: "<b>Someone on 4, you on 0: your ante jumps, because your first squid also buys immunity.</b> Your ante is {ante}, and you still lose another {denial} if he is the one who takes the pot.",
     tut6_bb: "<b>Defend the big blind wide: the squid is dead money.</b> Facing a {open} open, calling {call} into {pot} needs {plain} equity on chips alone, but only {squid} with a fresh squid at stake.",
     tut6_four: "<b>On 4, every pot is worth {ante}.</b> That is a dead-money multiple of {multiple}×, so 600 BB plays like {stack}.",
     tut6_caveat: "Pot-odds reasoning only: it ignores how much equity you actually realise postflop.",
@@ -1291,7 +1296,7 @@ const STRINGS = {
     language_label: "语言",
     lang_en: "EN",
     lang_zh: "中文",
-    real_money: "新一轮里，每个底池约带 {ante} ≈ {chips}的鱿鱼价值，约是盲注 75 筹码的 {multiple} 倍。结算时，没有鱿鱼的玩家按每只鱿鱼 100 筹码付给每位持有者；大奖则是其余 7 人每人付 1,000 筹码。",
+    real_money: "新一轮里，每个底池约带 {ante} ≈ {chips}的鱿鱼价值，约是盲注 75 筹码的 {multiple} 倍。结算时，没有鱿鱼的玩家按每只鱿鱼 100 筹码付给每位持有者；大奖则是由每位仍在 0 只的玩家各付 1,000 筹码（最多 7,000），持有者分文不付。",
 
     table_title: "牌桌",
     mode_aria: "点座位时改的是什么",
@@ -1459,12 +1464,12 @@ const STRINGS = {
     tut3_fill: "持有者每人 1 到 2 只，没人接近大奖。",
 
     tut4_title: "大奖的引力",
-    tut4_lead: "我有 4 只时，赢下这锅就是第 5 只：其余 7 人每人立刻付 1,000，所以 V(我赢) = {value_if_i_win}。就算这锅被别人赢走，我之后仍有 {p_later} 的机会拿到第 5 只，平均价值依然高达 {value_if_opponent_wins}。两者之差就是隐含前注：{ante}。",
+    tut4_lead: "我有 4 只时，赢下这锅就是第 5 只：所有仍在 0 只的玩家立刻每人付 1,000，所以 V(我赢) = {value_if_i_win}。就算这锅被别人赢走，我之后仍有 {p_later} 的机会拿到第 5 只，平均价值依然高达 {value_if_opponent_wins}。两者之差就是隐含前注：{ante}。",
     tut4_bar_win: "V(我赢)",
     tut4_bar_opponent: "对手赢时的平均值",
     tut4_bar_ante: "隐含前注",
-    tut4_villain_lead: "反过来看：对手有 4 只，我是 0 只。我自己的隐含前注降到 {ante}（新一轮是 {ante_fresh}），但这锅要是被他赢走，我比被普通对手赢走还要多亏 {denial}。这部分就是额外损失。",
-    tut4_shared: "桌上其他人都有同样的顾虑：宁可让第三个人赢，也不能让他赢。所以这已经不是两人之间的零和博弈，有 4 只鱿鱼的玩家参与的底池，打法会明显不同。",
+    tut4_villain_lead: "反过来看：对手有 4 只，我是 0 只。我自己的隐含前注跳到 {ante}（新一轮是 {ante_fresh}），因为我的第一只鱿鱼同时能买到对他那份大奖的免疫；但这锅要是被他赢走，我还是比被普通对手赢走多亏 {denial}。这部分就是额外损失。",
+    tut4_shared: "最有同样顾虑的是仍在 0 只的那些人：持有者已经免疫了，只有没鱿鱼的玩家才要付他的大奖，而你的第一只鱿鱼就是不当那个人的保险。所以这已经不是两人之间的零和博弈，有 4 只鱿鱼的玩家参与的底池，打法会因为谁手上还是 0 只而明显不同。",
     tut4_bar_villain: "V(他赢)",
 
     tut5_title: "公式速查",
@@ -1493,14 +1498,14 @@ const STRINGS = {
     tut6_title: "牌桌上怎么想",
     tut6_insurance: "<b>前期的底池是保险。</b>新一轮的底池约带 {ante}，约是盲注的 {blinds_multiple} 倍，主要因为赢下它能把你以 0 只收场的概率从 {p_now} 降到 {p_win}。",
     tut6_last: "<b>只剩你们两人没鱿鱼时，底池比罚款还值钱。</b>已发出 9 只时值 {swing}：既躲掉 {avoided} 的罚款，又能收 {collected}。",
-    tut6_villain: "<b>有人拿到 4 只：你自己的隐含前注变小，但你最怕他赢。</b>你 0 只时隐含前注是 {ante}，要是被他赢走，还要再多亏 {denial}。",
+    tut6_villain: "<b>有人拿到 4 只、你还是 0 只：你的隐含前注反而跳高，因为你的第一只鱿鱼也买到了免疫。</b>你的隐含前注是 {ante}，要是这锅被他赢走，还要再多亏 {denial}。",
     tut6_bb: "<b>大盲要宽防：鱿鱼就是死钱。</b>面对 {open} 的开池，用 {call} 跟进 {pot} 的底池，只看筹码需要 {plain} 胜率；算上新一轮的鱿鱼，只要 {squid}。",
     tut6_four: "<b>你有 4 只时，每个底池都值 {ante}。</b>死钱倍数高达 {multiple} 倍，600 BB 打起来像 {stack}。",
     tut6_caveat: "以上只是底池赔率层面的推理，没有考虑翻后实际能实现多少权益。",
   },
 };
 
-const SENSITIVITY = [{"preset":"fresh","position_only_bb":0.012699999999998823,"model_only_bb":0.06160000000000032},{"preset":"holders","position_only_bb":1.2905999999999995,"model_only_bb":0.8742999999999999},{"preset":"z2","position_only_bb":1.665799999999999,"model_only_bb":0.15529999999999866},{"preset":"me3","position_only_bb":1.1066000000000003,"model_only_bb":0.5790000000000006},{"preset":"me4","position_only_bb":9.123800000000003,"model_only_bb":5.247300000000003},{"preset":"villain4","position_only_bb":1.4496000000000002,"model_only_bb":0.26089999999999947},{"preset":"villain4me1","position_only_bb":1.0027,"model_only_bb":0.6035000000000004},{"preset":"desperate","position_only_bb":0,"model_only_bb":0}];
+const SENSITIVITY = [{"preset":"fresh","position_only_bb":0.26340000000000074,"model_only_bb":0.14939999999999998},{"preset":"holders","position_only_bb":1.3810000000000002,"model_only_bb":0.9337000000000018},{"preset":"z2","position_only_bb":1.665799999999999,"model_only_bb":0.15529999999999866},{"preset":"me3","position_only_bb":4.089100000000002,"model_only_bb":0.39099999999999824},{"preset":"me4","position_only_bb":6.405799999999999,"model_only_bb":2.061300000000003},{"preset":"villain4","position_only_bb":1.1327999999999996,"model_only_bb":0.5588000000000015},{"preset":"villain4me1","position_only_bb":0.7426000000000004,"model_only_bb":0.4593000000000007},{"preset":"desperate","position_only_bb":0,"model_only_bb":0}];
 // Squid Value Lab page logic: the table builder, the read-out for "me", pot odds and context charts, all from engine.js.
 "use strict";
 
