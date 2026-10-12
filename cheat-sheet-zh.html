@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>鱿鱼局翻前速查表 v2（第三轮：头鱼两条，单 straddle）</title>
+<style>
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "Public Sans", "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
+:root { --bg: #edf0ed; --ink: #15201a; --muted: #45534a; --accent: #2a6bc4; --code: #e3e8e4; }
+@media (prefers-color-scheme: dark) { :root { --bg: #101713; --ink: #e5ece7; --muted: #a9b7ae; --accent: #4f8ce0; --code: #2d3a32; } }
+main { max-width: 760px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 26px; line-height: 1.2; } h2 { font-size: 18px; margin: 28px 0 6px; } li { margin: 6px 0; }
+nav { color: var(--muted); font-size: 14px; } a { color: var(--accent); } code { background: var(--code); padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+<nav><a href="./">&larr; 鱿鱼价值实验室</a> &middot; <a href="cheat-sheet.html">English</a></nav>
+<h1>鱿鱼局翻前速查表 v2（第三轮：头鱼两条，单 straddle）</h1>
+<p>25/25 + 每手 50 的 straddle (STR)，筹码 30,000，有抽水。开池 = 600 或 900。括号里的数字是你的鱿鱼赏金（筹码）：你赢下这一锅的鱿鱼，比起一个普通的其他玩家赢下，对你多值多少。首入百分比指前面全部弃牌轮到你时；“入池” = 溜入或开池。每个局面都按它出现的频率加权（标题里写着它占全部牌局的比例）。<strong>[稳]</strong>：这个点上所有 EV 都移动 1 BB（25 筹码）后，建议依然成立。<strong>[模]</strong>：依赖模型，属于接近打平、罕见局面或防守数字。数据来源：<code>research/round3/cheat_sheet_v2_output.txt</code>（2,264 个求解）。</p>
+<h2>新一轮（1,043）：占 11.5% 的牌局</h2>
+<ul>
+<li>头鱼两条让第一锅值 1,043：赢家这一轮多得 913，其他每个座位各少 130。[稳]</li>
+<li>UTG+1 到 CO：溜入，不要开池。和溜入相比，开池平均每手亏 108–146。[稳]</li>
+<li>UTG+1 入池 38%，LJ 43%，HJ 51%，CO 62%，全部是溜入。分界线很软：在 UTG+1，25 筹码的误差就能让它落在 22% 到 64% 之间。[模]</li>
+<li>UTG+1 溜入 22+、A2s+、K2s+、Q6s+、J7s+、T7s+、97s+、87s、76s、A2o+、K8o+、Q9o+、J9o+。[模]</li>
+<li>BTN：每手都入池 [稳]；开池 93%，其中 69% 的手牌开 900 [模]。</li>
+<li>面对 BTN 的 600 开池，STR 从不弃牌（3bet 9%），BB 弃 34%。[模] 罕见（分别只出现在 0.3% / 0.8% 的牌局里）</li>
+</ul>
+<h2>头鱼发出后，有一人 2 只（0 只玩家 674，2 只玩家 880）：占 11.5%</h2>
+<ul>
+<li>0 只玩家稍微收紧：UTG+1 入池 28%（新一轮是 38%），去掉 A2o–A6o、K2s、K8o、J7s、97s、87s、76s。[模]</li>
+<li>UTG+1 到 CO 仍然溜入、不开池。[稳] BTN 开池 92%，现在以 600 为主（只有 38% 开 900）。[模]</li>
+<li>2 只玩家照新一轮打：UTG+1 39%，CO 61%，BTN 开池 99%。[模]</li>
+</ul>
+<h2>轮中，持有者 vs 0 只：占 42%，最常见的局面</h2>
+<ul>
+<li>你是 0 只（786）：UTG+1 入池 38%，LJ 43%，HJ 51%，CO 63%，以溜入为主；开池的那 4–12% 全部开 900。[模]</li>
+<li>你是 0 只、坐 BTN：每手都入池 [稳]；开池 98%，其中 65% 开 900 [模]。在 straddle 位，面对 BTN 的 600 开池只弃 8–10%。[模]</li>
+<li>你持有 1–2 只（397）：入池少一半左右。UTG+1 入池 19%（55+、A7s+、A5s、K9s+、Q9s+、JTs、ATo+、KTo+、QTo+），CO 37%。[模]</li>
+<li>你持有、坐 BTN：弃掉最差的 16%，开池 64%，以 600 为主。[模]</li>
+<li>你持有、坐 straddle 位：面对持有者的 BTN 开池弃 58%，面对 0 只玩家的只弃 28%。在 BB 分别弃 75% 和 57%。[模]</li>
+</ul>
+<h2>有人 3 只：占 20.5%</h2>
+<ul>
+<li>你自己 3 只（968，范围 429–1,616）：像 0 只玩家一样打，再松一点。UTG+1 入池 46%，多加 Q2s–Q4s、J4s–J6s、Q8o、K7o。[模]</li>
+<li>0 只玩家（943）照轮中的 0 只打：UTG+1 40%，CO 67%，BTN 开池 96%。持有者（363）收紧到 UTG+1 只玩 16%。[模]</li>
+</ul>
+<h2>有人 4 只：占 5.5%</h2>
+<ul>
+<li>你有 4 只（2,630，范围 1,907–3,594）：UTG+1 到 SB 首入都不弃牌（不超过 2%）。[稳] 前位以溜入为主：UTG+1 溜入 75%，开池 22%（几乎都开 900）；CO 开池 37%。[模]</li>
+<li>你有 4 只、坐 BTN：每手都开 900。[稳] 在 STR 或 BB，面对 BTN 的 600 开池从不弃牌。[模]</li>
+<li>你是 0 只（1,067）：照新一轮打。UTG+1 38%，CO 63%，BTN 开池 84%。[模] 面对 4 只玩家在 BTN 的 600 开池，STR 弃 7%、3bet 17%。[模] 极少出现</li>
+<li>你持有（390）：你只是旁观者，收紧到 UTG+1 只玩 27%。[模]</li>
+</ul>
+<h2>只剩两人 0 只（Z = 2）：占 9.2%</h2>
+<ul>
+<li>你是其中之一（已发 7–8 只时 933，最后一只时 1,100）：UTG+1 入池 68–69%（其中 18–19% 开池，全部 900），HJ 79–82%，CO 86%。[模]</li>
+<li>BTN 开池 98–100%，几乎都开 900。[稳] SB 开池 16–17%。[模]</li>
+<li>面对另一个 0 只玩家在 BTN 的 600 开池，STR 弃 0–2%，3bet 19%。面对持有者的开池，STR 弃 4%，BB 弃 34–36%。[模]</li>
+<li>已发 7–8 只和只剩最后一只时打法一样，虽然赏金不同（933 对 1,100）。[模]</li>
+<li>你是持有者（203–240）：大部分牌都弃。UTG+1 只玩 15–18%（66+、A8s+、K9s+、QTs+、JTs、ATo+、KJo+、QJo），BTN 弃 18–21%。[模]</li>
+<li>你持有，面对持有者在 BTN 的 600 开池：STR 弃 66–71%，BB 弃 81–84%。[模]</li>
+<li>只剩一个 0 只时不会再打牌：这一轮立刻结算。[稳]</li>
+</ul>
+<h2>诚实的局限</h2>
+<ul>
+<li>翻后没有求解，所有 EV 都依赖我们的权益实现率模型。</li>
+<li>我们假设每手只有一个 straddle。真实牌局里约 40–50% 的手牌有 100 的双 straddle，而头鱼规则下的双 straddle 我们还没解。</li>
+<li>前位溜入还是开池，对超强牌来说几乎打平。在 UTG+1，AA 溜入值 2,261，开池值 2,270，所以 AA–QQ 或 AK 开池的损失不到 30 筹码。一个冷启动的邻近局面求解，前位确实会开一些强牌。</li>
+<li>SB/BB 首入很罕见，也更不确定：新一轮里几乎从来不会弃到 SB（0.00% 的牌局）。所有防守数字所在的节点，出现频率都低于 7%。</li>
+<li>14% 的牌局附近没有求解（页面上显示为“粗略”）：约 7% 在有人 3 只的局面，4% 在有人 4 只的局面，那里只有差一只鱿鱼的解才能代用。求解精度：中位数每手 4.8 筹码，最差 10.0。</li>
+</ul>
+</main>
+</body>
+</html>

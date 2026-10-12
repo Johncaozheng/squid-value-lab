@@ -7,7 +7,7 @@
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@500;600;700&family=Public+Sans:wght@400;500;600;700&display=swap");
 
-/* Layout: a card-room instrument; felt table builder beside the read-out for "me", context charts below. */
+/* Layout: a card-room instrument; the squid monitor and the hand's action bar beside one big range grid; bounty maths and the tutorial sit behind tabs. */
 :root {
   --bg: #edf0ed;
   --surface: #fbfcfb;
@@ -34,6 +34,16 @@
   --seq-high: #1c4f99;
   --focus: #2a6bc4;
   --shadow: #15201a26;
+  --act-jam: #6b46a8;
+  --act-raise-large: #c2416b;
+  --act-raise-small: #d39a17;
+  --act-passive: #2e8b57;
+  --act-fold: #b9c4cc;
+  --rg-empty: #e6ebe7;
+  --rg-muted: #d3dad5;
+  --rg-cell-label: #fbfcfbd9;
+  --diff-more: #2a6bc4;
+  --diff-less: #c48a0e;
   --font-display: "Barlow Semi Condensed", "Arial Narrow", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --font-body: "Public Sans", "Segoe UI", "Helvetica Neue", Arial, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }
@@ -62,6 +72,16 @@
     --caution-soft: #3d2b1b;
     --seq-low: #1b2633;
     --seq-high: #7fb0f0;
+    --act-jam: #8f72dc;
+    --act-raise-large: #d95584;
+    --act-raise-small: #b08712;
+    --act-passive: #2b9a86;
+    --act-fold: #3d4a52;
+    --rg-empty: #1e2924;
+    --rg-muted: #2a3530;
+    --rg-cell-label: #17201bd1;
+    --diff-more: #4f8ce0;
+    --diff-less: #b8860b;
     --focus: #7fb0f0;
     --shadow: #00000066;
     color-scheme: dark;
@@ -91,6 +111,16 @@
   --caution-soft: #3d2b1b;
   --seq-low: #1b2633;
   --seq-high: #7fb0f0;
+  --act-jam: #8f72dc;
+  --act-raise-large: #d95584;
+  --act-raise-small: #b08712;
+  --act-passive: #2b9a86;
+  --act-fold: #3d4a52;
+  --rg-empty: #1e2924;
+  --rg-muted: #2a3530;
+  --rg-cell-label: #17201bd1;
+  --diff-more: #4f8ce0;
+  --diff-less: #b8860b;
   --focus: #7fb0f0;
   --shadow: #00000066;
   color-scheme: dark;
@@ -118,9 +148,6 @@ button, input, select { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* Header and settings */
-.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 12px 28px; }
-.title-block { display: grid; gap: 2px; min-width: 0; }
-.settings { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
 .setting { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .setting-label { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .chop-control { display: flex; align-items: center; gap: 8px; }
@@ -156,6 +183,10 @@ button, input, select { font: inherit; color: inherit; }
 }
 .felt-line { font-family: var(--font-display); font-size: 15px; font-weight: 600; letter-spacing: 0.02em; }
 .felt-sub { font-size: 12px; opacity: 0.85; }
+.felt-pill { justify-self: center; display: inline-flex; align-items: center; margin-top: 4px; border: 0; border-radius: 999px; padding: 2px 10px; background: #ffffff24; color: inherit; font-size: 12px; cursor: pointer; }
+.tier-dot.mode-solved { background: var(--felt-ink); }
+.tier-dot.mode-blend { background: linear-gradient(90deg, var(--felt-ink) 50%, transparent 50%); box-shadow: inset 0 0 0 1px var(--felt-ink); }
+.tier-dot.mode-rough { box-shadow: inset 0 0 0 1px var(--felt-ink); }
 .felt-flag { font-family: var(--font-display); font-weight: 700; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--chip-face); background: var(--danger); border-radius: 4px; padding: 1px 8px; justify-self: center; margin-top: 4px; }
 .seat {
   position: absolute; transform: translate(-50%, -50%);
@@ -394,6 +425,106 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
   .vbar-row.long { grid-template-columns: 3.2em minmax(0, 1fr) 5.4em; }
   .formula { font-size: 15px; }
 }
+
+/* Ranges */
+@media (min-width: 900px) { .rg-main { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); } }
+.rg-grid { display: grid; grid-template-columns: repeat(13, minmax(0, 1fr)); gap: 2px; aspect-ratio: 1; max-width: 100%; width: 100%; }
+.rg-cell { position: relative; border: 0; border-radius: 2px; padding: 1px; display: flex; align-items: flex-start; justify-content: flex-start; cursor: pointer; min-width: 0; overflow: hidden; background: var(--rg-empty); }
+.rg-cell span { font: 600 clamp(8px, 1.15vw, 12px)/1.15 var(--font-display); color: var(--ink); background: var(--rg-cell-label); border-radius: 2px; padding: 0 2px; white-space: nowrap; }
+.rg-cell:hover, .rg-cell.selected { outline: 2px solid var(--ink); outline-offset: -1px; z-index: 1; }
+.rg-cell.flag::after { content: ""; position: absolute; right: 2px; bottom: 2px; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 1.5px var(--surface); }
+.grp-jam { background: var(--act-jam); }
+.grp-raise_large { background: var(--act-raise-large); }
+.grp-raise_small { background: var(--act-raise-small); }
+.grp-passive { background: var(--act-passive); }
+.grp-fold { background: var(--act-fold); }
+.rg-sample-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--caution); border: 1px dashed var(--caution); border-radius: 3px; padding: 0 5px; }
+@media (max-width: 420px) {
+  .rg-grid { gap: 1px; }
+  .rg-cell span { font-size: 8px; padding: 0 1px; }
+}
+
+/* Plain-poker layer: takeaways, differences strip, advanced settings, glossary, sample banner */
+.takeaway { font-size: 15px; font-weight: 600; color: var(--ink); border-left: 3px solid var(--felt); padding-left: 10px; max-width: 70ch; }
+.takeaway:empty { display: none; }
+.diff-strip { display: grid; gap: 10px; }
+.diff-cards { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.diff-card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.diff-card h3 { text-transform: none; letter-spacing: 0; color: var(--ink); font-size: 16px; }
+.diff-card p { font-size: 14px; color: var(--ink-2); }
+.diff-card b { color: var(--ink); font-family: var(--font-display); font-size: 16px; }
+.advanced { border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; background: var(--surface); }
+.advanced summary { cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.advanced[open] { padding-bottom: 10px; }
+.advanced-body { display: flex; flex-wrap: wrap; gap: 10px 20px; margin-top: 8px; }
+:lang(zh-CN) .advanced summary { letter-spacing: 0; }
+.glossary-list { display: grid; grid-template-columns: minmax(0, 11em) minmax(0, 1fr); gap: 6px 16px; margin: 10px 0 0; font-size: 14px; max-width: 80ch; }
+.glossary-list dt { font-weight: 700; }
+.glossary-list dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 520px) { .glossary-list { grid-template-columns: minmax(0, 1fr); gap: 2px; } .glossary-list dd { margin-bottom: 8px; } }
+
+.rg-round-tag { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--felt); border: 1px solid var(--felt); border-radius: 3px; padding: 0 5px; }
+:lang(zh-CN) .rg-round-tag { letter-spacing: 0; }
+
+/* Main screen: compact header, squid monitor, action bar, one big grid, compact legend */
+.m-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 14px; }
+.brand { font-size: 20px; }
+.m-top .tabs { border-bottom: 0; }
+.tab-help { min-width: 36px; font-size: 18px; }
+.m-toggles { display: flex; gap: 8px; }
+.calc-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.view.main { gap: 12px; }
+.m-context { display: flex; flex-wrap: wrap; gap: 6px; }
+.m-pill { font-size: 12px; color: var(--ink-2); border: 1px solid var(--line); border-radius: 999px; padding: 1px 10px; background: var(--surface); }
+.m-pill.is-sample { color: var(--caution); border: 1px dashed var(--caution); background: var(--caution-soft); }
+.m-layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 900px) { .m-layout { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); } }
+.m-left, .m-range { display: grid; gap: 10px; min-width: 0; }
+.m-table { aspect-ratio: 1.35; }
+.m-table .seat-tag { top: -13px; }
+.seat-bounty { font-family: var(--font-display); font-size: 11px; font-weight: 600; color: var(--ink-2); line-height: 1; }
+.m-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.m-reset { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 5px 12px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.m-bar { list-style: none; margin: 0; padding: 4px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.m-bar li { flex: none; }
+.m-sep { color: var(--ink-3); }
+.m-step { border: 1px solid var(--line); background: var(--surface); border-radius: 6px; padding: 4px 8px; font-size: 13px; white-space: nowrap; cursor: pointer; color: var(--ink); }
+.m-step b { font-family: var(--font-display); }
+.m-step.is-fold { color: var(--ink-3); }
+.m-step.is-current { background: var(--ink); color: var(--surface); border-color: var(--ink); cursor: default; }
+.m-step.is-end { cursor: default; color: var(--ink-3); }
+.m-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 6px; }
+.m-act { border: 1px solid var(--line); border-left-width: 6px; background: var(--surface); border-radius: 8px; padding: 10px 8px; font: 600 15px/1.1 var(--font-display); cursor: pointer; color: var(--ink); }
+.m-act:hover { background: var(--surface-2); }
+.grp-edge-fold { border-left-color: var(--act-fold); }
+.grp-edge-passive { border-left-color: var(--act-passive); }
+.grp-edge-raise_small { border-left-color: var(--act-raise-small); }
+.grp-edge-raise_large { border-left-color: var(--act-raise-large); }
+.grp-edge-jam { border-left-color: var(--act-jam); }
+.m-missing { font-size: 13px; color: var(--ink-3); }
+.m-badge { display: flex; align-items: center; font-size: 13px; color: var(--ink-2); cursor: help; }
+.tier-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; flex: none; }
+.tier-dot.tier-normal { background: var(--act-passive); }
+.tier-dot.tier-directional { background: var(--caution); }
+.tier-dot.tier-unreliable { background: var(--ink-3); }
+.m-grid-wrap { position: relative; }
+.m-grid.is-rare { filter: grayscale(1); opacity: 0.5; }
+.m-grid.is-sample { filter: saturate(0.45); }
+.m-pop { position: absolute; left: 8px; right: 8px; bottom: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; box-shadow: 0 6px 20px var(--shadow); display: grid; gap: 4px; z-index: 2; }
+.m-pop-tie { margin: 4px 0 0; font-size: 13px; color: var(--ink-3); }
+.m-pop-head { font-size: 14px; padding-right: 24px; }
+.m-pop-head b { font-family: var(--font-display); font-size: 18px; margin-right: 6px; }
+.m-pop-row { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto auto; gap: 8px; align-items: center; font-size: 13px; }
+.m-pop-row b { font-family: var(--font-display); }
+.m-pop-close { position: absolute; top: 4px; right: 6px; border: 0; background: none; font-size: 20px; line-height: 1; cursor: pointer; color: var(--ink-2); }
+.m-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.m-key { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 10px; font-size: 13px; cursor: pointer; color: var(--ink); }
+.m-key b { font-family: var(--font-display); }
+.m-key small, .m-pop-row small { color: var(--ink-3); }
+.m-key[aria-pressed="true"] { border-color: var(--ink); background: var(--surface-2); }
+.m-more summary { cursor: pointer; font-size: 13px; color: var(--ink-3); }
+.m-more-body { display: grid; gap: 10px; margin-top: 8px; }
+.m-notes { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 13px; color: var(--ink-2); }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
@@ -401,56 +532,119 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
 </head>
 <body>
 
+
 <div class="page">
-  <header class="top">
-    <div class="title-block">
-      <h1 data-i18n="title"></h1>
-      <p class="muted" data-i18n="subtitle"></p>
+  <header class="m-top">
+    <h1 class="brand" data-i18n="brand"></h1>
+    <div class="tabs" role="tablist" data-i18n-aria="tabs_aria">
+      <button type="button" class="tab" role="tab" id="tab-ranges" aria-controls="view-ranges" aria-selected="true" data-i18n="tab_ranges"></button>
+      <button type="button" class="tab" role="tab" id="tab-calc" aria-controls="view-calc" aria-selected="false" tabindex="-1" data-i18n="tab_calc"></button>
+      <button type="button" class="tab tab-help" role="tab" id="tab-how" aria-controls="view-how" aria-selected="false" tabindex="-1" data-i18n-aria="tab_how">?</button>
     </div>
-    <div class="settings" role="group" data-i18n-aria="settings_aria">
-      <div class="setting">
-        <span class="setting-label" id="model-label" data-i18n="model_label"></span>
-        <div class="segmented" role="radiogroup" aria-labelledby="model-label">
-          <input type="radio" name="win-model" id="model-uniform" value="uniform" checked>
-          <label for="model-uniform" data-i18n="model_uniform"></label>
-          <input type="radio" name="win-model" id="model-position" value="position_weighted">
-          <label for="model-position" data-i18n="model_position"></label>
-        </div>
+    <div class="m-toggles">
+      <div class="segmented" role="radiogroup" data-i18n-aria="units_label">
+        <input type="radio" name="unit" id="unit-chips" value="chips" checked>
+        <label for="unit-chips" data-i18n="unit_chips"></label>
+        <input type="radio" name="unit" id="unit-bb" value="bb">
+        <label for="unit-bb" data-i18n="unit_bb"></label>
       </div>
-      <div class="setting">
-        <label class="setting-label" for="chop-rate" data-i18n="chop_label"></label>
-        <div class="chop-control">
-          <input type="range" id="chop-rate" min="0" max="5" step="0.5" value="0">
-          <output class="chop-value" id="chop-value" for="chop-rate">0%</output>
-        </div>
-      </div>
-      <div class="setting">
-        <span class="setting-label" id="units-label" data-i18n="units_label"></span>
-        <div class="segmented" role="radiogroup" aria-labelledby="units-label">
-          <input type="radio" name="unit" id="unit-bb" value="bb" checked>
-          <label for="unit-bb" data-i18n="unit_bb"></label>
-          <input type="radio" name="unit" id="unit-chips" value="chips">
-          <label for="unit-chips" data-i18n="unit_chips"></label>
-        </div>
-      </div>
-      <div class="setting">
-        <span class="setting-label" id="language-label" data-i18n="language_label"></span>
-        <div class="segmented" role="radiogroup" aria-labelledby="language-label">
-          <input type="radio" name="language" id="lang-en" value="en" checked>
-          <label for="lang-en" lang="en" data-i18n="lang_en"></label>
-          <input type="radio" name="language" id="lang-zh" value="zh">
-          <label for="lang-zh" lang="zh-CN" data-i18n="lang_zh"></label>
-        </div>
+      <div class="segmented" role="radiogroup" data-i18n-aria="language_label">
+        <input type="radio" name="language" id="lang-en" value="en" checked>
+        <label for="lang-en" lang="en" data-i18n="lang_en"></label>
+        <input type="radio" name="language" id="lang-zh" value="zh">
+        <label for="lang-zh" lang="zh-CN" data-i18n="lang_zh"></label>
       </div>
     </div>
   </header>
-  <div class="tabs" role="tablist" data-i18n-aria="tabs_aria">
-    <button type="button" class="tab" role="tab" id="tab-calc" aria-controls="view-calc" aria-selected="true" data-i18n="tab_calc"></button>
-    <button type="button" class="tab" role="tab" id="tab-how" aria-controls="view-how" aria-selected="false" tabindex="-1" data-i18n="tab_how"></button>
+
+  <div class="view main" id="view-ranges" role="tabpanel" aria-labelledby="tab-ranges">
+    <p class="m-context"><span class="m-pill" id="m-model" hidden></span><span class="m-pill is-sample" id="m-sample" data-i18n="m_sample" hidden></span></p>
+    <div class="m-layout">
+      <section class="m-left" data-i18n-aria="m_monitor">
+        <div class="table-wrap m-table" id="m-table-wrap"><div class="felt" id="m-felt"></div></div>
+        <div class="m-controls">
+          <div class="segmented" role="radiogroup" data-i18n-aria="mode_aria">
+            <input type="radio" name="m-mode" id="m-mode-squids" value="squids" checked>
+            <label for="m-mode-squids" data-i18n="m_mode_squids"></label>
+            <input type="radio" name="m-mode" id="m-mode-button" value="button">
+            <label for="m-mode-button" data-i18n="m_mode_button"></label>
+            <input type="radio" name="m-mode" id="m-mode-me" value="me">
+            <label for="m-mode-me" data-i18n="m_mode_me"></label>
+          </div>
+          <button type="button" class="m-reset" id="m-reset" data-i18n="m_reset"></button>
+        </div>
+        <ol class="m-bar" id="m-bar" data-i18n-aria="m_hand"></ol>
+        <div class="m-actions" id="m-actions"></div>
+        <p class="m-missing" id="m-missing" hidden></p>
+        <p class="m-missing" id="m-locked" data-i18n="m_locked" hidden></p>
+      </section>
+      <section class="m-range" id="m-range" data-i18n-aria="rg_grid_aria">
+        <p class="m-badge" id="m-badge"></p>
+        <div class="m-grid-wrap">
+          <div class="rg-grid m-grid" id="m-grid" role="group" data-i18n-aria="rg_grid_aria"></div>
+          <div class="m-pop" id="m-pop" hidden></div>
+        </div>
+        <ul class="m-legend" id="m-legend"></ul>
+      </section>
+    </div>
+    <details class="m-more" id="m-more">
+      <summary data-i18n="m_more"></summary>
+      <div class="m-more-body">
+        <div class="setting" id="m-model-row" hidden>
+          <span class="setting-label" id="m-model-label" data-i18n="m_model"></span>
+          <div class="segmented" role="radiogroup" aria-labelledby="m-model-label">
+            <input type="radio" name="m-model" id="m-model-real" value="real" checked>
+            <label for="m-model-real" data-i18n="m_model_real"></label>
+            <input type="radio" name="m-model" id="m-model-round1" value="round1">
+            <label for="m-model-round1" data-i18n="m_model_round1"></label>
+          </div>
+        </div>
+        <div class="setting">
+          <span class="setting-label" id="m-real-label" data-i18n="rg_realisation"></span>
+          <div class="segmented" role="radiogroup" aria-labelledby="m-real-label">
+            <input type="radio" name="m-real" id="m-real-low" value="low">
+            <label for="m-real-low" data-i18n="rg_real_low"></label>
+            <input type="radio" name="m-real" id="m-real-calibrated" value="calibrated" checked>
+            <label for="m-real-calibrated" data-i18n="rg_real_calibrated"></label>
+            <input type="radio" name="m-real" id="m-real-high" value="high">
+            <label for="m-real-high" data-i18n="rg_real_high"></label>
+          </div>
+        </div>
+        <ul class="m-notes" id="m-notes"></ul>
+      </div>
+    </details>
   </div>
 
-  <div class="view" id="view-calc" role="tabpanel" aria-labelledby="tab-calc">
-  <p class="real-line" id="real-line"></p>
+  <div class="view" id="view-calc" role="tabpanel" aria-labelledby="tab-calc" hidden>
+  <div class="calc-head">
+    <p class="muted" id="subtitle"></p>
+      <details class="advanced" id="advanced-settings">
+      <summary data-i18n="advanced_label"></summary>
+      <div class="advanced-body">
+        <div class="setting">
+          <span class="setting-label" id="model-label" data-i18n="model_label"></span>
+          <div class="segmented" role="radiogroup" aria-labelledby="model-label">
+            <input type="radio" name="win-model" id="model-uniform" value="uniform" checked>
+            <label for="model-uniform" data-i18n="model_uniform"></label>
+            <input type="radio" name="win-model" id="model-position" value="position_weighted">
+            <label for="model-position" data-i18n="model_position"></label>
+          </div>
+        </div>
+        <div class="setting">
+          <label class="setting-label" for="chop-rate" data-i18n="chop_label"></label>
+          <div class="chop-control">
+            <input type="range" id="chop-rate" min="0" max="5" step="0.5" value="0">
+            <output class="chop-value" id="chop-value" for="chop-rate">0%</output>
+          </div>
+        </div>
+      </div>
+    </details>
+  </div>
+  <section class="diff-strip" aria-labelledby="diff-title">
+    <h2 id="diff-title" data-i18n="diff_title"></h2>
+    <div class="diff-cards" id="diff-cards"></div>
+    <p class="small-print" data-i18n="rules_line"></p>
+  </section>
 
   <div class="workbench">
     <section class="panel area-table" aria-labelledby="table-title">
@@ -480,12 +674,13 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
         <h2 id="answer-title" data-i18n="answer_title"></h2>
         <span class="who" id="who"></span>
       </div>
+      <p class="takeaway" id="take-answer"></p>
       <div class="flag" id="flag" hidden>
         <strong data-i18n="flag_title"></strong>
         <span id="flag-reason"></span>
       </div>
       <div class="hero">
-        <p class="setting-label" data-i18n="ante_label"></p>
+        <p class="setting-label" data-i18n="ante_label" data-i18n-title="ante_tooltip"></p>
         <div class="hero-number"><span class="hero-value" id="hero-ante">–</span><span class="hero-unit" id="hero-unit"></span><span class="secondary hero-secondary" id="hero-secondary"></span></div>
         <p class="hero-caption" data-i18n="ante_caption"></p>
         <span class="alert-pill" id="alert" hidden></span>
@@ -514,6 +709,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
         <h2 id="odds-title" data-i18n="odds_title"></h2>
         <span class="muted" id="odds-note"></span>
       </div>
+      <p class="takeaway" id="take-odds"></p>
       <form class="odds-inputs" id="odds-form">
         <div class="field"><label for="pot-size" id="pot-label"></label><input id="pot-size" type="number" inputmode="decimal" min="0" step="0.5" value="12"></div>
         <div class="field"><label for="call-amount" id="call-label"></label><input id="call-amount" type="number" inputmode="decimal" min="0" step="0.5" value="8"></div>
@@ -542,22 +738,26 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
       <h2 id="strip-title" data-i18n="strip_title"></h2>
       <span class="muted" id="strip-note"></span>
     </div>
+    <p class="takeaway" id="take-strip"></p>
     <div class="seat-strip" id="seat-strip"></div>
   </section>
 
   <section class="charts">
     <div class="panel">
       <div class="panel-head"><h2 data-i18n="key_title"></h2><span class="muted" id="key-note"></span></div>
+      <p class="takeaway" id="take-key"></p>
       <div class="grid-lines" id="key-axis" aria-hidden="true"></div>
       <div class="hbars" id="key-bars"></div>
       <p class="chart-note" data-i18n="key_hint"></p>
     </div>
     <div class="panel">
       <div class="panel-head"><h2 data-i18n="heat_title"></h2><span class="muted" id="heat-note"></span></div>
+      <p class="takeaway" id="take-heat"></p>
       <div class="heat-wrap"><table class="heat" id="heat"></table></div>
     </div>
     <div class="panel">
       <div class="panel-head"><h2 data-i18n="ending_title"></h2><span class="muted" data-i18n="ending_unit"></span></div>
+      <p class="takeaway" id="take-ending"></p>
       <div class="key"><span><i class="swatch s2"></i><span data-i18n="ending_fresh"></span></span><span><i class="swatch s1"></i><span data-i18n="ending_here"></span></span></div>
       <div class="columns" id="ending-columns"></div>
       <div class="column-labels" id="ending-labels"></div>
@@ -565,6 +765,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
     </div>
     <div class="panel">
       <div class="panel-head"><h2 data-i18n="sens_title"></h2><span class="muted" id="sens-note"></span></div>
+      <p class="takeaway" id="take-sens"></p>
       <div class="key"><span><i class="swatch s1"></i><span data-i18n="sens_position"></span></span><span><i class="swatch s2"></i><span data-i18n="sens_model"></span></span></div>
       <div class="pair-bars" id="sensitivity-bars"></div>
       <p class="chart-note" data-i18n="sens_note"></p>
@@ -577,14 +778,16 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
       <li data-i18n="method_1"></li>
       <li data-i18n="method_2"></li>
       <li data-i18n="method_3"></li>
-      <li data-i18n="method_4"></li>
+      <li id="method-4"></li>
       <li data-i18n="method_5"></li>
     </ul>
   </details>
+  <p class="footer" id="footer"></p>
   </div>
 
   <div class="view tutorial" id="view-how" role="tabpanel" aria-labelledby="tab-how" hidden>
     <p class="tut-intro" data-i18n="tut_intro"></p>
+    <p class="muted"><a href="cheat-sheet.html">Cheat sheet</a> &middot; <a href="cheat-sheet-zh.html">速查表</a></p>
     <section class="panel tut" aria-labelledby="tut1-title">
       <h2 id="tut1-title"><span class="tut-step">1</span><span data-i18n="tut1_title"></span></h2>
       <p data-i18n="tut1_lead"></p>
@@ -632,8 +835,11 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
       <ol class="rules" id="tut6-rules"></ol>
       <p class="small-print" data-i18n="tut6_caveat"></p>
     </section>
+    <details class="method glossary" id="glossary">
+      <summary data-i18n="gl_title"></summary>
+      <dl class="glossary-list" id="glossary-list"></dl>
+    </details>
   </div>
-  <p class="footer" id="footer"></p>
 </div>
 
 <script>
@@ -646,6 +852,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
   const PAY_PER_SQUID = 100;
   const JACKPOT_THRESHOLD = 5;
   const JACKPOT_PER_PLAYER = 1000;
+  const FIRST_POT_SQUIDS = 2; // head fish (头鱼两条, John 2026-10-06): the round's first squid pot pays 2
   const CHIPS_PER_BB = 50;
 
   // position name for each seat offset from the button (offset 0 = the button itself), 8-handed only
@@ -724,9 +931,12 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
     return counts.some((count) => count >= JACKPOT_THRESHOLD) ? 0 : players_without_squid(counts);
   }
 
+  /** Squids the next pot pays: the head fish while none are out (a chop passes it on), then 1. */
+  const squids_for_next_pot = (counts) => (sum(counts) === 0 ? FIRST_POT_SQUIDS : 1);
+
   /** New squid counts after one hand; a null winner is a chop, which changes nothing. */
   function award_squid(counts, pot_winner) {
-    return counts.map((count, seat) => (seat === pot_winner ? count + 1 : count));
+    return counts.map((count, seat) => (seat === pot_winner ? count + squids_for_next_pot(counts) : count));
   }
 
   /** Solve V[b] = self_loop[b] * V[b+1] + known[b] around the button cycle, exactly, for payloads of the given size. */
@@ -766,6 +976,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
       const known = new Float64Array(NUM_PLAYERS * size);
       // our game has no per-player cap, so only a chop leaves the counts unchanged
       const self_loop = new Float64Array(NUM_PLAYERS).fill(chop);
+      const won = squids_for_next_pot(counts);
       for (let button = 0; button < NUM_PLAYERS; button++) {
         const row = button * size;
         const next_row = ((button + 1) % NUM_PLAYERS) * size;
@@ -773,13 +984,13 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
         for (let winner = 0; winner < NUM_PLAYERS; winner++) {
           const probability = win_by_button[button][winner];
           if (probability === 0) continue;
-          counts[winner] += 1;
-          const child_key = key + POWERS_OF_SIX[winner];
+          counts[winner] += won;
+          const child_key = key + won * POWERS_OF_SIX[winner];
           const terminal = terminal_payload(counts, child_key);
           const child = terminal || solve(counts, child_key);
           const offset = terminal ? 0 : next_row;
           for (let d = 0; d < size; d++) known[row + d] += probability * child[offset + d];
-          counts[winner] -= 1;
+          counts[winner] -= won;
         }
       }
       const result = solve_button_cycle(self_loop, known, size);
@@ -888,7 +1099,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
       return settlement_parts(next_counts, (button_seat + 1) % NUM_PLAYERS, hero);
     }
 
-    /** Solve every reachable state at once (all are reachable from the fresh round). */
+    /** Solve every state reachable from the fresh round at once (others solve when asked). */
     function solve_all() {
       payload_at(Array(NUM_PLAYERS).fill(0), 0);
       return main.solved_count();
@@ -920,22 +1131,19 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
   // hero is seat 0 in every example; opponents sit clockwise from hero
   const HERO = 0;
   const LAST_SQUID = [0, 2, 2, 2, 1, 1, 1, 0];
-  // two players on 0 with S = 6, 7, 8, 9 squids out, holders on 1-2 squids
-  const TWO_ON_ZERO = [[0, 1, 1, 1, 1, 1, 1, 0], [0, 2, 1, 1, 1, 1, 1, 0], [0, 2, 2, 1, 1, 1, 1, 0], [0, 2, 2, 2, 1, 1, 1, 0]];
+  // two players on 0 with S = 7, 8, 9 squids out (S = 6 cannot happen: the first holder has 2), holders on 1-2 squids
+  const TWO_ON_ZERO = [[0, 2, 1, 1, 1, 1, 1, 0], [0, 2, 2, 1, 1, 1, 1, 0], [0, 2, 2, 2, 1, 1, 1, 0]];
   const HERO_ON_FOUR = [4, 0, 0, 0, 0, 0, 0, 0];
   const VILLAIN_ON_FOUR = [0, 4, 0, 0, 0, 0, 0, 0];
-  // big-blind defence example: a 2.5 BB open, SB 0.5 and BB 1 in, so BB calls 1.5 into 4
-  const OPEN_BB = 2.5;
-  const BB_DEFENCE = { pot: 4, call: 1.5 };
-  const BLINDS_BB = 1.5;
-  const STACK_BB = 600;
+  // the table, in engine BB (50 chips): round 1 by default (2.5 open, 0.5 + 1 posted, the BB closes, 600 deep); the page passes the real game's
+  const ROUND1_TABLE = { open_bb: 2.5, posts_bb: 1.5, closer_post_bb: 1, stack_bb: 600 };
   const STANDUP_VAL_BB = 3;
 
   const sum = (numbers) => numbers.reduce((total, number) => total + number, 0);
   const mean = (numbers) => sum(numbers) / numbers.length;
   const opponents_of = (seat) => [...Array(NUM_PLAYERS).keys()].filter((other) => other !== seat);
   const in_bb = (chips) => chips / CHIPS_PER_BB;
-  const dead_money_multiple = (ante) => (ante + BLINDS_BB) / BLINDS_BB;
+  const dead_money_multiple = (ante, table) => (ante + table.posts_bb) / table.posts_bb;
 
   /** Money parts in BB, chances unchanged. */
   function parts_in_bb(parts) {
@@ -964,7 +1172,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
   }
 
   /** Fresh round: the 7/8 identity and where V(I win) comes from. */
-  function fresh_round(engine, button) {
+  function fresh_round(engine, button, table = ROUND1_TABLE) {
     const step = one_step(engine, FRESH, button, HERO);
     const parts_win = parts_in_bb(engine.parts_after_hand(FRESH, button, HERO, HERO));
     const parts_opponent = mean_parts(opponents_of(HERO).map((seat) => parts_in_bb(engine.parts_after_hand(FRESH, button, seat, HERO))));
@@ -978,13 +1186,13 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
       seven_eighths: (7 / 8) * step.ante,
       parts_win, parts_opponent, parts_now,
       expected_payers,
-      multiple: dead_money_multiple(step.ante),
-      stack: STACK_BB / dead_money_multiple(step.ante),
-      blinds_multiple: step.ante / BLINDS_BB,
+      multiple: dead_money_multiple(step.ante, table),
+      stack: table.stack_bb / dead_money_multiple(step.ante, table),
+      blinds_multiple: step.ante / table.posts_bb,
     };
   }
 
-  /** 9 out, me and one other on 0: three branches, then the ante for S = 6..9 squids out. */
+  /** 9 out, me and one other on 0: three branches, then the ante for S = 7..9 squids out. */
   function last_squid(engine, button, settle_round) {
     const step = one_step(engine, LAST_SQUID, button, HERO);
     const other_zero = LAST_SQUID.findIndex((count, seat) => count === 0 && seat !== HERO);
@@ -1012,7 +1220,7 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
   }
 
   /** Hero on 4 (V(I win) is the jackpot itself), then a villain on 4 with hero on 0. */
-  function jackpot(engine, button) {
+  function jackpot(engine, button, table = ROUND1_TABLE) {
     const hero_step = one_step(engine, HERO_ON_FOUR, button, HERO);
     const later = mean(opponents_of(HERO).map((seat) => engine.parts_after_hand(HERO_ON_FOUR, button, seat, HERO).p_my_jackpot));
     const villain = VILLAIN_ON_FOUR.findIndex((count) => count === 4);
@@ -1023,8 +1231,8 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
         value_if_opponent_wins: hero_step.value_if_opponent_wins,
         ante: hero_step.ante,
         chance_of_jackpot_later: later,
-        multiple: dead_money_multiple(hero_step.ante),
-        stack: STACK_BB / dead_money_multiple(hero_step.ante),
+        multiple: dead_money_multiple(hero_step.ante, table),
+        stack: table.stack_bb / dead_money_multiple(hero_step.ante, table),
       },
       villain_on_four: {
         value_if_i_win: villain_step.value_if_i_win,
@@ -1041,9 +1249,11 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
     return { plain: call / (pot + call), with_squid: call / (pot + call + swing) };
   }
 
-  /** Big-blind defence against an open, with a fresh squid as the swing. */
-  function big_blind_defence(fresh_ante) {
-    return { open: OPEN_BB, pot: BB_DEFENCE.pot, call: BB_DEFENCE.call, ...pot_odds(BB_DEFENCE.pot, BB_DEFENCE.call, fresh_ante) };
+  /** The closer (BB, or the straddle) defending a single open, with a fresh squid as the swing: pot = open + posts, call = open - own post. */
+  function big_blind_defence(fresh_ante, table = ROUND1_TABLE) {
+    const pot = table.open_bb + table.posts_bb;
+    const call = table.open_bb - table.closer_post_bb;
+    return { open: table.open_bb, pot, call, ...pot_odds(pot, call, fresh_ante) };
   }
 
   /** QuintAce Stand-up swing 6 * val / (N - 1), at the start (N = 6) and with two left (N = 2). */
@@ -1059,23 +1269,411 @@ details.method ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6p
 
 </script>
 <script>
+// Ranges viewer logic with no DOM: action groups and labels, range summaries, bracket flags, state matching and comparisons.
+(function (root) {
+  "use strict";
+
+  const GROUPS = ["jam", "raise_large", "raise_small", "passive", "fold"];  // band order, top to bottom
+  const COMBOS = Array.from({ length: 169 }, (_, index) => {
+    const row = Math.floor(index / 13);
+    const column = index % 13;
+    return row === column ? 6 : row < column ? 4 : 12;
+  });
+
+  const KIND_OF_TOKEN = { k: "check", c: "call", r: "raise", j: "jam" };
+  const TOKEN_OF_KIND = { check: "k", call: "c", raise: "r", jam: "j" };
+
+  /** {type, opener, size, hero, three_bettor, actor} from a spot id like "vs_open:CO:2.5:BB" (or a line: id). */
+  function parse_spot(spot) {
+    if (spot.startsWith("line:")) return { type: "line", actor: spot.split(">")[1] };
+    const [type, a, b, c] = spot.split(":");
+    if (type === "first") return { type, hero: a, actor: a };
+    if (type === "vs_open") return { type, opener: a, size: Number(b), hero: c, actor: c };
+    return { type, opener: a, size: Number(b), three_bettor: c, actor: a };
+  }
+
+  /** {steps: [{seat, kind, to_bb}], actor}: the non-fold actions before a spot (folds are implied), for any spot id. */
+  function spot_steps(spot) {
+    const parsed = parse_spot(spot);
+    const open = (seat, size) => ({ seat, kind: "raise", to_bb: size });
+    if (parsed.type === "first") return { steps: [], actor: parsed.actor };
+    if (parsed.type === "vs_open") return { steps: [open(parsed.opener, parsed.size)], actor: parsed.actor };
+    if (parsed.type === "vs_3bet") return { steps: [open(parsed.opener, parsed.size), open(parsed.three_bettor, null)], actor: parsed.actor };
+    const steps = spot.slice(5).split(">")[0].split(",").map((token) => {
+      const dot = token.indexOf(".");  // seat names never contain a dot, raise sizes can ("r2.5")
+      const seat = token.slice(0, dot);
+      const action = token.slice(dot + 1);
+      return { seat, kind: KIND_OF_TOKEN[action[0]], to_bb: action.length > 1 ? Number(action.slice(1)) : null };
+    });
+    return { steps, actor: parsed.actor };
+  }
+
+  /** The spot id for these steps and actor, with the same canonical forms as build_ranges_data.spot_id. */
+  function canonical_spot(steps, actor) {
+    const raises = steps.filter((step) => step.kind === "raise");
+    if (!steps.length) return `first:${actor}`;
+    if (steps.length === 1 && raises.length === 1) return `vs_open:${steps[0].seat}:${steps[0].to_bb}:${actor}`;
+    if (steps.length === 2 && raises.length === 2 && steps[0].seat === actor) return `vs_3bet:${actor}:${steps[0].to_bb}:${steps[1].seat}`;
+    return `line:${steps.map((step) => `${step.seat}.${TOKEN_OF_KIND[step.kind]}${step.kind === "raise" ? step.to_bb : ""}`).join(",")}>${actor}`;
+  }
+
+  /** Raises before the node, and whether anyone limped in before the first raise. */
+  function pot_so_far(node) {
+    const { steps } = spot_steps(node.spot);
+    return { raises: steps.filter((step) => step.kind === "raise").length, limped: steps.some((step) => step.kind === "call") };
+  }
+
+  /** Colour group of each action at a node (see ranges_schema.md). */
+  function action_groups(node) {
+    const raises = node.actions.map((action, index) => ({ action, index })).filter(({ action }) => action.kind === "raise");
+    const smallest = Math.min(...raises.map(({ action }) => action.to_bb));
+    const unopened = pot_so_far(node).raises === 0;
+    return node.actions.map((action) => {
+      if (action.kind === "fold") return "fold";
+      if (action.kind === "check" || action.kind === "call") return "passive";
+      if (action.kind === "jam") return "jam";
+      if (raises.length > 1) return action.to_bb === smallest ? "raise_small" : "raise_large";
+      return unopened ? "raise_small" : "raise_large";
+    });
+  }
+
+  /** String key and size for each action label: first in, open small / open big and limp; over limpers, raise and limp; facing raises, call and 3-/4-/5-bet. */
+  function action_labels(node) {
+    const { raises, limped } = pot_so_far(node);
+    const groups = action_groups(node);
+    return node.actions.map((action, index) => {
+      if (action.kind === "call") return { key: raises === 0 ? "act_limp" : "act_call" };
+      if (action.kind !== "raise") return { key: `act_${action.kind}` };
+      if (raises === 0 && !limped) return { key: groups[index] === "raise_small" ? "act_open_small" : "act_open_big", to_bb: action.to_bb };
+      return { key: ["act_iso", "act_3bet", "act_4bet"][raises] || "act_5bet", to_bb: action.to_bb };
+    });
+  }
+
+  // A preflop hand, simulated in the data's position order (blinds and straddles post first, act last), so limpers and straddles fall out of the rules.
+  /** {positions, blinds, stack_bb} for a dataset; round 1 has no blinds field, so SB 0.5 / BB 1 and 600 BB deep. */
+  const hand_rules = (data) => ({ positions: data.positions, blinds: data.blinds || { SB: 0.5, BB: 1 }, stack_bb: data.stack_bb || 600 });
+
+  function start_hand(rules) {
+    const contrib = rules.positions.map((position) => rules.blinds[position] || 0);
+    const none = rules.positions.map(() => false);
+    return { contrib, folded: [...none], all_in: [...none], acted: [...none], bet: Math.max(...contrib), last: rules.positions.length - 1 };
+  }
+
+  /** The hand after one step ({seat, kind, to_bb}); a 3-bet of unknown size just tops the current bet. */
+  function hand_after(rules, hand, step) {
+    const next = { ...hand, contrib: [...hand.contrib], folded: [...hand.folded], all_in: [...hand.all_in], acted: [...hand.acted] };
+    const index = rules.positions.indexOf(step.seat);
+    next.last = index;
+    next.acted[index] = true;
+    if (step.kind === "fold") next.folded[index] = true;
+    if (step.kind === "call" || step.kind === "check") next.contrib[index] = next.bet;
+    if (step.kind === "raise" || step.kind === "jam") {
+      next.contrib[index] = step.kind === "jam" ? rules.stack_bb : step.to_bb ?? next.bet + 1;
+      next.all_in[index] = step.kind === "jam";
+      next.bet = Math.max(next.bet, next.contrib[index]);
+      next.acted = next.acted.map((acted, seat) => seat === index);
+    }
+    return next;
+  }
+
+  /** Index of the next position to act, or null once preflop is over. */
+  function next_to_act(hand) {
+    const count = hand.folded.length;
+    if (hand.folded.filter((folded) => !folded).length < 2) return null;
+    for (let step = 1; step <= count; step++) {
+      const seat = (hand.last + step) % count;
+      if (!hand.folded[seat] && !hand.all_in[seat] && (!hand.acted[seat] || hand.contrib[seat] < hand.bet)) return seat;
+    }
+    return null;
+  }
+
+  const replay = (rules, path) => path.reduce((hand, step) => hand_after(rules, hand, step), start_hand(rules));
+  const spot_of = (path, actor) => canonical_spot(path.filter((step) => step.kind !== "fold"), actor);
+
+  /** The explicit path (folds included) that reaches a spot id, or null if the betting rules never reach it. */
+  function path_to(rules, spot) {
+    const { steps, actor } = spot_steps(spot);
+    let hand = start_hand(rules);
+    const path = [];
+    let used = 0;
+    for (let guard = 0; guard < 64; guard++) {
+      const seat_index = next_to_act(hand);
+      if (seat_index === null) return null;
+      const seat = rules.positions[seat_index];
+      if (used === steps.length && seat === actor) return path;
+      const step = used < steps.length && steps[used].seat === seat ? steps[used++] : { seat, kind: "fold" };
+      hand = hand_after(rules, hand, step);
+      path.push(step);
+    }
+    return null;
+  }
+
+  /** The simple decision for one class: "always" (95%+), "mostly" (60%+) or a mix of its top two actions. */
+  function decision(node, index) {
+    const ranked = node.strategy[index].map((permille, action) => ({ action, share: permille / 1000 })).sort((a, b) => b.share - a.share);
+    const kind = ranked[0].share >= 0.95 ? "always" : ranked[0].share >= 0.6 ? "mostly" : "mixed";
+    return { kind, top: ranked[0], second: ranked[1] };
+  }
+
+  /** Per-class weight in [0, 1] of being in the actor's range here. */
+  const range_weight = (node, index) => (node.range ? node.range[index] / 1000 : 1);
+
+  /** Per action: share of range combos taking it, and the combo-weighted EV of the hands that take it (null without EVs). */
+  function summary(node) {
+    let total = 0;
+    const mass = node.actions.map(() => 0);
+    const ev_mass = node.actions.map(() => 0);
+    for (let index = 0; index < 169; index++) {
+      const weight = COMBOS[index] * range_weight(node, index);
+      total += weight;
+      node.strategy[index].forEach((permille, action) => {
+        mass[action] += (weight * permille) / 1000;
+        if (node.ev_bb) ev_mass[action] += ((weight * permille) / 1000) * node.ev_bb[index][action];
+      });
+    }
+    return node.actions.map((_, action) => ({
+      frequency: total > 0 ? mass[action] / total : 0,
+      ev: node.ev_bb && mass[action] > 0 ? ev_mass[action] / mass[action] : null,
+    }));
+  }
+
+  /** Index of the action a class plays most often. */
+  function main_action(node, index) {
+    const row = node.strategy[index];
+    return row.indexOf(Math.max(...row));
+  }
+
+  /** Per class, true when the LOW and HIGH nodes disagree on the main action's group (and the class is in range). */
+  function bracket_flags(low_node, high_node) {
+    if (!low_node || !high_node) return Array(169).fill(false);
+    const low_groups = action_groups(low_node);
+    const high_groups = action_groups(high_node);
+    return Array.from({ length: 169 }, (_, index) => range_weight(low_node, index) > 0.05
+      && low_groups[main_action(low_node, index)] !== high_groups[main_action(high_node, index)]);
+  }
+
+  /** Share of a class's play that is not a fold. */
+  function continue_share(node, index) {
+    const groups = action_groups(node);
+    return node.strategy[index].reduce((sum, permille, action) => sum + (groups[action] === "fold" ? 0 : permille), 0) / 1000;
+  }
+
+  /** Combo-weighted share of all 1,326 combos (times range) that continue. */
+  function continue_frequency(node) {
+    let played = 0;
+    let total = 0;
+    for (let index = 0; index < 169; index++) {
+      const weight = COMBOS[index] * range_weight(node, index);
+      played += weight * continue_share(node, index);
+      total += weight;
+    }
+    return total > 0 ? played / total : 0;
+  }
+
+  /** Per class, how B differs from A: change in continue share and whether the main action's group changed; plus totals. */
+  function compare(node_a, node_b) {
+    const groups_a = action_groups(node_a);
+    const groups_b = action_groups(node_b);
+    const cells = Array.from({ length: 169 }, (_, index) => ({
+      change: continue_share(node_b, index) - continue_share(node_a, index),
+      changed: groups_a[main_action(node_a, index)] !== groups_b[main_action(node_b, index)],
+    }));
+    return {
+      cells,
+      changed: cells.filter((cell) => cell.changed).length,
+      continue_a: continue_frequency(node_a),
+      continue_b: continue_frequency(node_b),
+    };
+  }
+
+  /** The solve for a state and realisation, if present. */
+  const find_solve = (data, state, realisation) => data.solves.find((solve) => solve.state === state && solve.realisation === realisation);
+  /** A node by spot id, if present. */
+  const find_node = (solve, spot) => (solve ? solve.nodes.find((node) => node.spot === spot) : undefined);
+
+  /** The solved squid state equal to these counts, else the nearest by total squid difference (squids-off states excluded). */
+  function nearest_state(data, counts) {
+    const distance = (state) => state.squids.reduce((sum, count, seat) => sum + Math.abs(count - counts[seat]), 0);
+    const candidates = data.states.filter((state) => state.squids);
+    const best = candidates.reduce((a, b) => (distance(b) < distance(a) ? b : a));
+    return { state: best, exact: distance(best) === 0 };
+  }
+
+  // Round 3: anchors are fetched as gzip parts, decoded into viewer nodes and blended by weight into one solve for the tapped state.
+  const TIERS = ["normal", "directional", "unreliable"];  // tier byte order, as build_ranges_data.TIER_CODES
+
+  const gunzip = (response) => new Response(response.body.pipeThrough(new DecompressionStream("gzip"))).arrayBuffer();
+
+  /** Viewer nodes of one anchor part (byte layout in build_ranges_data.pack_nodes), for the frozen nodes it holds. */
+  function decode_part(buffer, frozen, chips_per_bb) {
+    const count = frozen.length;
+    let at = 0;
+    const take = (Type, length) => {
+      const view = new Type(buffer, at, length);
+      at += length * Type.BYTES_PER_ELEMENT;
+      return view;
+    };
+    const total = frozen.reduce((sum, node) => sum + node.actions.length, 0);
+    const [reach, gain] = [take(Float32Array, count), take(Float32Array, count)];
+    const [tier, range, strategy] = [take(Uint8Array, count), take(Uint8Array, 169 * count), take(Uint8Array, 169 * total)];
+    at += at % 2;
+    const ev = take(Int16Array, 169 * total);
+    let before = 0;  // actions of the nodes already decoded
+    return frozen.map((node, k) => {
+      const width = node.actions.length;
+      const start = 169 * before;
+      const rows = (values, scale) => Array.from({ length: 169 }, (_, hand) => Array.from(values.subarray(start + hand * width, start + (hand + 1) * width), (value) => value * scale));
+      before += width;
+      return { ...node, strategy: rows(strategy, 1000 / 255), ev_bb: rows(ev, 1 / chips_per_bb), range: Array.from(range.subarray(169 * k, 169 * (k + 1)), (value) => (value * 1000) / 255),
+        reliability: { tier: TIERS[tier[k]], reach: reach[k], gain_bb: gain[k] } };
+    });
+  }
+
+  /** The weighted sum of equally shaped nested arrays. */
+  const mix = (values, weights) => (Array.isArray(values[0]) ? values[0].map((_, at) => mix(values.map((value) => value[at]), weights)) : values.reduce((sum, value, at) => sum + value * weights[at], 0));
+
+  /** One node list from several anchors' lists (same nodes, same order): strategy, range and EV by weight; the worst tier and the largest gain. */
+  function blend_nodes(lists, weights) {
+    return lists[0].map((node, k) => {
+      const here = lists.map((list) => list[k]);
+      const reliability = here.map((other) => other.reliability);
+      return { ...node, strategy: mix(here.map((other) => other.strategy), weights), range: mix(here.map((other) => other.range), weights), ev_bb: mix(here.map((other) => other.ev_bb), weights),
+        reliability: { tier: TIERS[Math.max(...reliability.map((entry) => TIERS.indexOf(entry.tier)))], reach: mix(reliability.map((entry) => entry.reach), weights), gain_bb: Math.max(...reliability.map((entry) => entry.gain_bb)) } };
+    });
+  }
+
+  /** The (9, 8) squid offsets in chips for squids by position (row = pot winner, last row = chop, which reads 0), with the button placed so seat = position. */
+  function squid_offsets(engine, squids, posts) {
+    const button = (2 * squids.length - 1 - posts) % squids.length;
+    const rows = [...squids.keys(), null].map((winner) => engine.value_after_hand(squids, button, winner));
+    return rows.map((row) => row.map((value, player) => value - rows[squids.length][player]));
+  }
+
+  // Blend weights, ported line by line from solvers/preflop/blend.py (rules in research/round3/anchors.md, on4.md); test_ranges.mjs checks them against blend_fixture.json.
+  const RADIUS_CHIPS = 132;
+  const MAX_BLEND_ANCHORS = 4;
+
+  /** Chips (as float32, like the solver's distance): the worst player's spread, across pot winners, of the change in that player's offsets. */
+  function column_range_distance(offsets_a, offsets_b) {
+    return Math.fround(Math.max(...offsets_a[0].map((_, player) => {
+      const changes = offsets_a.map((row, winner) => row[player] - offsets_b[winner][player]);
+      return Math.max(...changes) - Math.min(...changes);
+    })));
+  }
+
+  const same_seats = (a, b, count) => a.every((value, seat) => (value === count) === (b[seat] === count));
+  /** True when every anchor holder also holds in the target, and then the on-4 rule (same hunters and zeros, at most 1 squid moved) or else no seat 2+ squids apart. */
+  function may_stand_in(anchor_squids, squids) {
+    if (squids.some((count, seat) => count === 0 && anchor_squids[seat] > 0)) return false;
+    if (!squids.includes(4)) return squids.every((count, seat) => Math.abs(count - anchor_squids[seat]) < 2);
+    const moved = squids.reduce((sum, count, seat) => sum + Math.abs(count - anchor_squids[seat]), 0);
+    return same_seats(anchor_squids, squids, 4) && same_seats(anchor_squids, squids, 0) && moved <= 1;
+  }
+
+  /** Solve the square system by Gaussian elimination with partial pivoting; null when it is singular. */
+  function solve_system(matrix, vector) {
+    const size = vector.length;
+    const rows = matrix.map((row, at) => [...row, vector[at]]);
+    for (let column = 0; column < size; column++) {
+      const pivot = rows.reduce((best, _, at) => (at >= column && Math.abs(rows[at][column]) > Math.abs(rows[best][column]) ? at : best), column);
+      if (rows[pivot][column] === 0) return null;
+      [rows[column], rows[pivot]] = [rows[pivot], rows[column]];
+      for (let at = column + 1; at < size; at++) {
+        const factor = rows[at][column] / rows[column][column];
+        for (let k = column; k <= size; k++) rows[at][k] -= factor * rows[column][k];
+      }
+    }
+    const solution = Array(size).fill(0);
+    for (let at = size - 1; at >= 0; at--) solution[at] = (rows[at][size] - rows[at].slice(at + 1, size).reduce((sum, value, k) => sum + value * solution[at + 1 + k], 0)) / rows[at][at];
+    return solution;
+  }
+
+  const dot = (a, b) => a.reduce((sum, value, at) => sum + value * b[at], 0);
+
+  /** Weights summing to 1 whose mix of the points is closest to the target, by least squares; null if degenerate. */
+  function affine_weights(target, points) {
+    if (points.length === 1) return [1];
+    const steps = points.slice(1).map((point) => point.map((value, at) => value - points[0][at]));
+    const rest = solve_system(steps.map((row) => steps.map((other) => dot(row, other))), steps.map((row) => dot(row, target.map((value, at) => value - points[0][at]))));
+    return rest && [1 - rest.reduce((a, b) => a + b, 0), ...rest];
+  }
+
+  /** Every way to pick `size` of 0..count-1, in itertools.combinations order. */
+  function combinations(count, size) {
+    if (size === 0) return [[]];
+    return Array.from({ length: count }, (_, first) => first).flatMap((first) => combinations(count - first - 1, size - 1).map((rest) => [first, ...rest.map((at) => at + first + 1)]));
+  }
+
+  /** Weights >= 0 summing to 1 that best fit the target: the best affine fit over every subset, smallest subsets first (a near tie keeps the earlier one). */
+  function convex_weights(target, points) {
+    let best = null;
+    let best_residual = Infinity;
+    for (let size = 1; size <= points.length; size++) {
+      for (const subset of combinations(points.length, size)) {
+        const chosen = subset.map((at) => points[at]);
+        const weights = affine_weights(target, chosen);
+        if (!weights || Math.min(...weights) < 0) continue;
+        const residual = target.reduce((sum, value, at) => sum + (weights.reduce((mixed, weight, k) => mixed + weight * chosen[k][at], 0) - value) ** 2, 0);
+        if (residual < best_residual * (1 - 1e-9)) {
+          best = Array(points.length).fill(0);
+          subset.forEach((at, k) => { best[at] = weights[k]; });
+          best_residual = residual;
+        }
+      }
+    }
+    return best;
+  }
+
+  /** {mode: solved | blend | rough, anchors: indices, weights, nearest, distance}: how a target squid state is shown, from its offsets and the anchors'. */
+  function blend_weights(target_counts, target_offsets, anchor_counts, anchor_offsets, radius = RADIUS_CHIPS) {
+    const distance = anchor_offsets.map((offsets) => column_range_distance(target_offsets, offsets));
+    const compatible = anchor_counts.map((counts) => may_stand_in(counts, target_counts));
+    const on_four = target_counts.includes(4);
+    // on 4 with nothing compatible, the page shows the nearest anchor with the hunter in the same seat (validation.md)
+    const hunter_moved = anchor_counts.map((counts) => on_four && !same_seats(counts, target_counts, 4));
+    const by_rank = anchor_counts.map((_, at) => at).sort((a, b) => (compatible[b] - compatible[a]) || (hunter_moved[a] - hunter_moved[b]) || (distance[a] - distance[b]) || (a - b));
+    const nearest = by_rank[0];
+    const result = { nearest, distance: distance[nearest] };
+    if (anchor_counts[nearest].join() === target_counts.join()) return { mode: "solved", anchors: [nearest], weights: [1], ...result };
+    if (on_four && compatible[nearest]) return { mode: "blend", anchors: [nearest], weights: [1], ...result };
+    const near = by_rank.filter((at) => compatible[at] && distance[at] <= radius).slice(0, MAX_BLEND_ANCHORS);
+    if (!near.length) return { mode: "rough", anchors: [nearest], weights: [1], ...result };
+    const weights = convex_weights(target_offsets.flat(), near.map((at) => anchor_offsets[at].flat()));
+    return { mode: "blend", anchors: near.filter((_, k) => weights[k] > 0), weights: weights.filter((weight) => weight > 0), ...result };
+  }
+
+  /** The page's view of blend_weights: {mode, anchors: [{id, weight, gap}], gap} from the manifest's anchors ({id, squids, offsets}). */
+  function pick_blend(anchors, offsets, squids) {
+    const choice = blend_weights(squids, offsets, anchors.map((anchor) => anchor.squids), anchors.map((anchor) => anchor.offsets));
+    return { mode: choice.mode, gap: choice.distance,
+      anchors: choice.anchors.map((at, k) => ({ id: anchors[at].id, weight: choice.weights[k], gap: column_range_distance(offsets, anchors[at].offsets) })) };
+  }
+
+  const api = {
+    GROUPS, COMBOS, parse_spot, spot_steps, canonical_spot, pot_so_far, hand_rules, start_hand, hand_after, next_to_act, replay, spot_of, path_to, action_groups, action_labels, decision, range_weight, summary, main_action,
+    bracket_flags, continue_share, continue_frequency, compare, find_solve, find_node, nearest_state,
+    gunzip, decode_part, blend_nodes, squid_offsets, column_range_distance, may_stand_in, convex_weights, blend_weights, pick_blend,
+  };
+  if (typeof module === "object" && module.exports) module.exports = api;
+  else root.RangesLogic = api;
+})(typeof globalThis !== "undefined" ? globalThis : this);
+
+</script>
+<script>
 // Every piece of page text, in English and Simplified Chinese; {name} marks a value filled in by app.js.
 const STRINGS = {
   en: {
-    title: "Squid Value Lab",
-    subtitle: "8-handed NLHE · 30,000 stacks · 25/50 blinds · 600 BB deep · 10 squids a round",
-    settings_aria: "Settings",
+    subtitle: "8-handed NLHE · 30,000 stacks · {structure} · 10 squids a round",
     model_label: "Who wins pots",
-    model_uniform: "Uniform",
-    model_position: "Illustrative position guess",
-    chop_label: "Chop rate",
+    model_uniform: "Everyone equal",
+    model_position: "By position (guess)",
+    chop_label: "Chopped pots",
     units_label: "Units",
     unit_bb: "BB",
     unit_chips: "chips",
     language_label: "Language",
     lang_en: "EN",
     lang_zh: "中文",
-    real_money: "A fresh pot carries ~{ante} ≈ {chips} of squid value, about {multiple}× the 75 chips of blinds. At settlement each player on 0 pays 100 chips per squid to every holder; the jackpot is 1,000 chips from each player still on 0 (up to 7,000) — holders pay nothing.",
 
     table_title: "Table",
     mode_aria: "What a tap on a seat changes",
@@ -1085,10 +1683,10 @@ const STRINGS = {
     hint_squids: "Tap a seat to cycle its squids 0 → 4 → 0.",
     hint_button: "Tap the seat with the dealer button.",
     hint_me: "Tap your own seat.",
-    presets_label: "Key states",
+    presets_label: "Common spots",
     preset_fresh: "Fresh",
     preset_holders: "4 holders",
-    preset_z2: "Z = 2",
+    preset_z2: "2 left on 0",
     preset_me3: "Me on 3",
     preset_me4: "Me on 4",
     preset_villain4: "Villain on 4",
@@ -1120,27 +1718,27 @@ const STRINGS = {
     problem_ten_out: "{n} squids are out. The round ends when the 10th lands, so at most 9 can be out mid-round.",
     problem_one_zero: "Only one player is on 0. The round ends the moment that happens.",
     problem_no_zero: "Nobody is on 0. The round would have ended when one player was left on 0.",
-    ante_label: "Implicit ante",
-    ante_caption: "What winning this pot is worth to you, compared with an average opponent winning it.",
+    ante_label: "Squid bounty",
+    ante_caption: "What this pot's squid is worth to you.",
     alert_four_one: "{names} is one pot from the jackpot",
     alert_four_many: "{names} are one pot from the jackpot",
     alert_three_one: "{names} is two pots from the jackpot",
     alert_three_many: "{names} are two pots from the jackpot",
     names_joiner: " and ",
-    stat_jackpot: "P(round ends in a jackpot)",
-    stat_hands: "Expected hands left",
-    stat_multiple: "Dead-money multiple",
-    stat_stack: "Effective stack",
+    stat_jackpot: "Chance this round ends in a jackpot",
+    stat_hands: "Hands left this round (average)",
+    stat_multiple: "Pot plays like it has this much dead money",
+    stat_stack: "Stacks play like",
     rule_tag: "rule of thumb",
     swing_title: "If this player wins instead of you",
-    swing_caption: "Swing: what you lose compared with winning the pot yourself.",
+    swing_caption: "How much worse off you are if this player takes the pot instead of you.",
     swing_head_opponent: "Opponent",
-    swing_head_swing: "Swing",
-    swing_head_denial: "Denial",
-    key_ante: "implicit ante",
-    key_denial: "denial cost (extra loss when this player wins)",
-    key_tick: "ante level",
-    swing_row_title: "{position} wins: you lose {swing} compared with winning yourself; {denial} of that is denial cost",
+    swing_head_swing: "Win vs lose",
+    swing_head_denial: "Extra loss",
+    key_ante: "your bounty",
+    key_denial: "extra loss if he wins",
+    key_tick: "bounty level",
+    swing_row_title: "If {position} wins, you are {swing} worse off than if you win; {denial} of that is the extra loss from him winning.",
 
     odds_title: "Should I call?",
     odds_note: "pot odds, in {unit}",
@@ -1150,19 +1748,19 @@ const STRINGS = {
     villain_option: "{position} ({seat}, {squids})",
     odds_plain: "Equity needed, no squid",
     odds_squid: "Equity needed, with squid",
-    odds_formula: "{call} ÷ ({pot} + {call}) vs {call} ÷ ({pot} + {call} + {swing} swing against {position}).",
-    odds_formula_blank: "call ÷ (pot + call) vs call ÷ (pot + call + your swing against this villain).",
-    odds_caveat: "Pot-odds maths only. It assumes this villain takes the pot if you fold, and it ignores postflop realisation. Not solver advice.",
+    odds_formula: "{call} ÷ ({pot} + {call}) vs {call} ÷ ({pot} + {call} + {swing} win vs lose against {position}).",
+    odds_formula_blank: "call ÷ (pot + call) vs call ÷ (pot + call + your win vs lose against this villain).",
+    odds_caveat: "Pot odds only. It assumes this villain takes the pot if you fold, and ignores how the hand plays out postflop. Not solver advice.",
 
-    strip_title: "Every seat's implicit ante",
+    strip_title: "Every seat's squid bounty",
     strip_note: "{unit}, this state · D = button",
     strip_me: "me",
 
-    key_title: "Implicit ante in the key states",
+    key_title: "Squid bounty in common spots",
     key_note_any: "{unit}, any seat",
     key_note_position: "{unit}, me in the {position}",
     key_hint: "Tap a bar to load that state. Opponents sit clockwise from me.",
-    heat_title: "My ante by squid race",
+    heat_title: "Your bounty as the squid race heats up",
     heat_corner: "Me ↓ · top opponent →",
     heat_caption: "Fill: me in my seat, the top opponent in the next seat clockwise ({position}), the other six on 0, with the current button and settings. Outlined cell: the table right now.",
     heat_cell: "Me on {mine}, top opponent on {theirs}: {value}",
@@ -1181,18 +1779,18 @@ const STRINGS = {
     sens_position: "my position alone",
     sens_model: "win model alone",
     sens_row_title: "{state}: position {position}, model {model}",
-    sens_note: "From sensitivity.md: largest minus smallest ante. Position: me moved round all 8 seats under the position guess. Model: me on the button, across 5 win models (uniform, position guess, each with 2% chops, and the guess shaken ±20%).",
+    sens_note: "From sensitivity.md: largest minus smallest bounty. Position: me moved round all 8 seats under the position guess. Model: me on the button, across 5 win models (uniform, position guess, each with 2% chops, and the guess shaken ±20%).",
 
     method_title: "How these numbers are made",
-    method_1: "Each hand one seat wins the pot and a squid (a chop scores nothing), then the button moves. We solve the whole round exactly as a Markov chain over squid counts and the button.",
-    method_2: "Every value is an exact expected settlement under the rules. The implicit ante is your value if you win this pot, minus your average value if an opponent wins it.",
+    method_1: "Each hand one seat wins the pot and a squid (2 for the round's first squid pot; a chop scores nothing and passes that bonus on), then the button moves. We solve the whole round exactly as a Markov chain over squid counts and the button.",
+    method_2: "Every value is an exact expected settlement under the rules. Your squid bounty (the implicit ante) is your value if you win this pot, minus your average value if an opponent wins it.",
     method_3: "\"Uniform\" gives every seat the same chance to win each pot. The position guess tilts it: BB 18%, BTN 16%, CO 13%, HJ 12%, MP 11%, the rest 10%. It is a hand-made guess, not measured data.",
-    method_4: "The dead-money multiple, (ante + 1.5) ÷ 1.5, and the effective stack, 600 ÷ multiple, are napkin rules of thumb, not solver output.",
+    method_4: "Dead money is the bounty plus the {posts} posted before the cards; stacks then play like {deep} ÷ (dead money ÷ {posts}). Both are napkin rules of thumb, not solver output.",
     method_5: "Win rates from our preflop solver will replace the position guess when those results land.",
     footer: "Engine: exact port of value_engine/markov_value.py, checked against the Python tables to 0.001 BB. {model}, {chop}% chops: whole round solved in {ms} ms.",
 
     tabs_aria: "Page sections",
-    tab_calc: "Calculator",
+    tab_calc: "Bounty",
     tab_how: "How it works",
     tut_intro: "Why a squid is worth what it is. Every number on this tab comes live from the calculator's engine, with your current settings and units.",
     tut_invalid: "The calculator's table is not a possible mid-round state, so this part is paused. Fix it in the Calculator tab or load an example.",
@@ -1200,9 +1798,9 @@ const STRINGS = {
     tut_example_last: "Last squid",
     tut_more: "Show the working",
 
-    tut1_title: "What the implicit ante measures",
-    tut1_lead: "A pot holds chips and a squid, and the squid changes how the round settles. The implicit ante is that extra money: my value if I win this pot, minus my average value if an opponent wins it.",
-    tut1_formula: "ante = <i>V</i>(I win) − average over the 7 opponents of <i>V</i>(they win)",
+    tut1_title: "What the squid bounty measures",
+    tut1_lead: "A pot holds chips and a squid, and the squid changes how the round settles. The squid bounty (the implicit ante) is that extra money: my value if I win this pot, minus my average value if an opponent wins it.",
+    tut1_formula: "bounty = <i>V</i>(I win) − average over the 7 opponents of <i>V</i>(they win)",
     tut1_state: "Next hand at the calculator's table: me in the {position} with {squids}.",
     tut1_col_outcome: "Next pot won by",
     tut1_col_chance: "Chance",
@@ -1211,12 +1809,12 @@ const STRINGS = {
     tut1_chop: "Chop (no squid)",
     tut1_v_win: "V(I win)",
     tut1_v_opponents: "Average if an opponent wins",
-    tut1_ante: "Implicit ante",
-    tut1_check: "Weight each row by its chance and you get my value right now: {value}. The ante itself ignores the chances: it compares me winning with an average opponent winning.",
+    tut1_ante: "Squid bounty",
+    tut1_check: "Weight each row by its chance and you get my value right now: {value}. The bounty itself ignores the chances: it compares me winning with an average opponent winning.",
 
     tut2_title: "Fresh round: why {ante}",
     tut2_lead: "At the start all 8 seats are alike and the game is zero-sum, so everyone's value is 0. After one hand the 7 non-winners are still alike, so each holds −V(I win) ÷ 7.",
-    tut2_formula: "ante = <i>V</i>(I win) + <i>V</i>(I win) ÷ 7 = 8/7 · <i>V</i>(I win)  ⇒  <i>V</i>(I win) = 7/8 · ante",
+    tut2_formula: "bounty = <i>V</i>(I win) + <i>V</i>(I win) ÷ 7 = 8/7 · <i>V</i>(I win)  ⇒  <i>V</i>(I win) = 7/8 · bounty",
     tut2_check: "7/8 × {ante} = {seven_eighths}, and the engine gives V(I win) = {value_if_i_win}.",
     tut2_check_position: "Under the position guess the seats are not alike, so this is only close: 7/8 × {ante} = {seven_eighths}, against the engine's {value_if_i_win}.",
     tut2_parts_lead: "Where does V(I win) come from? Split my final settlement by source. Once I hold a squid I can never finish on 0, so winning the first pot wipes out what I expected to pay.",
@@ -1234,20 +1832,20 @@ const STRINGS = {
     tut3_branch_me: "I win. The 10th squid lands and he is the only one on 0. He pays every holder 100 per squid, so I collect",
     tut3_branch_other: "He wins. All 10 are out and I am the only one on 0, so I pay 100 × 10",
     tut3_branch_holder: "A holder wins. All 10 are out with both of us on 0, so we each pay 1,000",
-    tut3_formula: "swing = penalty avoided + collection as a new holder = {avoided} + {collected} = {swing}",
+    tut3_formula: "win vs lose = penalty avoided + collection as a new holder = {avoided} + {collected} = {swing}",
     tut3_why: "Winning does two things at once: it cancels my 1,000 payment and makes me a holder who gets paid.",
-    tut3_general_lead: "With two players on 0 and S squids out, the round ends as soon as either of us wins a pot, and the one left on 0 pays 100 × (S + 1) in total. The ante climbs with S: the bill I am exposed to grows, and fewer pots remain to escape it.",
+    tut3_general_lead: "With two players on 0 and S squids out, the round ends as soon as either of us wins a pot, and the one left on 0 pays 100 × (S + 1) in total. The bounty climbs with S: the bill I am exposed to grows, and fewer pots remain to escape it.",
     tut3_col_out: "Squids out S",
     tut3_col_bill: "Bill if one of us wins",
-    tut3_col_ante: "My implicit ante",
+    tut3_col_ante: "My squid bounty",
     tut3_fill: "Holders have 1 or 2 squids each; nobody is near the jackpot.",
 
     tut4_title: "The jackpot pull",
-    tut4_lead: "On 4 squids, winning the pot is my 5th: every player still on 0 pays 1,000 at once, so V(I win) = {value_if_i_win}. If someone else wins it, I still reach 5 later in {p_later} of rounds, so my average stays high at {value_if_opponent_wins}. The ante is the gap: {ante}.",
+    tut4_lead: "On 4 squids, winning the pot is my 5th: every player still on 0 pays 1,000 at once, so V(I win) = {value_if_i_win}. If someone else wins it, I still reach 5 later in {p_later} of rounds, so my average stays high at {value_if_opponent_wins}. The bounty is the gap: {ante}.",
     tut4_bar_win: "V(I win)",
     tut4_bar_opponent: "Average if an opponent wins",
-    tut4_bar_ante: "Implicit ante",
-    tut4_villain_lead: "Now flip it: a villain is on 4 and I am on 0. My own ante jumps to {ante} (fresh round: {ante_fresh}), because my first squid would also buy immunity from his jackpot; but if he wins this pot I still lose {denial} more than if an average opponent wins it. That gap is the denial cost.",
+    tut4_bar_ante: "Squid bounty",
+    tut4_villain_lead: "Now flip it: a villain is on 4 and I am on 0. My own bounty jumps to {ante} (fresh round: {ante_fresh}), because my first squid also buys immunity from his jackpot. And if he wins this pot, I lose {denial} more than if an average opponent wins it: that is the extra loss if he wins.",
     tut4_shared: "The players who share that interest most are the ones still on 0: a holder is already immune, so only the zero-squid players stand to pay his jackpot, and your first squid is insurance against being one of them. So the game is no longer zero-sum between two players, and pots with the player on 4 in them play differently depending on who still holds nothing.",
     tut4_bar_villain: "V(he wins)",
 
@@ -1255,48 +1853,168 @@ const STRINGS = {
     tut5_recursion_name: "Value recursion",
     tut5_recursion: "<i>V</i>(s) = Σ<sub>w</sub> <i>P</i>(w wins) · <i>V</i>(s after w wins) + <i>P</i>(chop) · <i>V</i>(s, next button);  <i>V</i>(round over) = settlement",
     tut5_recursion_example: "Calculator table now: V(me) = {value}. Chops only delay the round; they never change who ends up paying.",
-    tut5_ante_name: "Implicit ante",
-    tut5_ante: "ante = <i>V</i>(I win) − (1/7) Σ<sub>j</sub> <i>V</i>(j wins)",
+    tut5_ante_name: "Squid bounty (implicit ante)",
+    tut5_ante: "bounty = <i>V</i>(I win) − (1/7) Σ<sub>j</sub> <i>V</i>(j wins)",
     tut5_ante_example: "Calculator table now: {ante}.",
     tut5_fresh_name: "Fresh round, seats alike",
-    tut5_fresh: "<i>V</i>(I win) = 7/8 · ante",
+    tut5_fresh: "<i>V</i>(I win) = 7/8 · bounty",
     tut5_fresh_example: "7/8 × {ante} = {value_if_i_win}.",
-    tut5_last_name: "Last-squid swing",
-    tut5_last: "swing = penalty avoided + collection as a new holder",
+    tut5_last_name: "Last squid: win vs lose",
+    tut5_last: "win vs lose = penalty avoided + collection as a new holder",
     tut5_last_example: "{avoided} + {collected} = {swing}.",
     tut5_odds_name: "Squid pot odds",
-    tut5_odds: "EV(call) − EV(fold) = <i>p</i> · (pot + call + swing) − call ≥ 0  ⇒  <i>p</i> ≥ call ÷ (pot + call + swing)",
-    tut5_odds_example: "Your calculator inputs: calling {call} into {pot} with a {swing} swing needs {needed} equity instead of {plain}.",
-    tut5_dead_name: "Dead-money multiple (rule of thumb)",
-    tut5_dead: "<i>m</i> = (ante + 1.5) ÷ 1.5,  effective stack ≈ 600 BB ÷ <i>m</i>",
-    tut5_dead_example: "Fresh round: {multiple}×, so 600 BB plays like {stack}. Every pot starts with the ante plus blinds of dead money, so there is far more to fight for preflop and deep stacks play like short ones.",
+    tut5_odds: "EV(call) − EV(fold) = <i>p</i> · (pot + call + <i>W</i>) − call ≥ 0  ⇒  <i>p</i> ≥ call ÷ (pot + call + <i>W</i>),  where <i>W</i> = win vs lose this pot",
+    tut5_odds_example: "Your calculator inputs: calling {call} into {pot}, with {swing} win vs lose on the squid, needs {needed} equity instead of {plain}.",
+    tut5_dead_name: "Dead money (rule of thumb)",
+    tut5_dead: "dead money = bounty + {posts},  <i>m</i> = dead money ÷ {posts},  stacks play like {deep} ÷ <i>m</i>",
+    tut5_dead_example: "Fresh round: dead money is {multiple}× the posts, so {deep} plays like {stack}. Every pot starts with the bounty plus the posts already in it, so there is far more to fight for preflop and deep stacks play like short ones.",
     tut5_standup_name: "A cousin: QuintAce Stand-up",
-    tut5_standup: "swing = 6 · val ÷ (N − 1),  N = players still without a squid",
+    tut5_standup: "their swing = 6 · val ÷ (N − 1),  N = players still without a squid",
     tut5_standup_example: "With val = 3 BB: {fresh} at the start (N = 6), {late} with two left (N = 2). A simpler game: 6-max, one squid each, one loser.",
 
     tut6_title: "How to think about it at the table",
-    tut6_insurance: "<b>Early pots are insurance.</b> A fresh pot carries {ante}, about {blinds_multiple}× the blinds, mostly because winning it cuts your chance of finishing on 0 from {p_now} to {p_win}.",
+    tut6_insurance: "<b>Early pots are insurance.</b> A fresh pot carries {ante}, about {blinds_multiple}× the posts, mostly because winning it cuts your chance of finishing on 0 from {p_now} to {p_win}.",
     tut6_last: "<b>Two of you left on 0: the pot is worth more than the penalty.</b> With 9 out it is worth {swing}: you dodge the {avoided} payment and collect {collected}.",
-    tut6_villain: "<b>Someone on 4, you on 0: your ante jumps, because your first squid also buys immunity.</b> Your ante is {ante}, and you still lose another {denial} if he is the one who takes the pot.",
-    tut6_bb: "<b>Defend the big blind wide: the squid is dead money.</b> Facing a {open} open, calling {call} into {pot} needs {plain} equity on chips alone, but only {squid} with a fresh squid at stake.",
-    tut6_four: "<b>On 4, every pot is worth {ante}.</b> That is a dead-money multiple of {multiple}×, so 600 BB plays like {stack}.",
-    tut6_caveat: "Pot-odds reasoning only: it ignores how much equity you actually realise postflop.",
+    tut6_villain: "<b>Someone on 4, you on 0: your bounty jumps, because your first squid also buys immunity.</b> It is {ante}, and you lose another {denial} if he is the one who takes the pot.",
+    tut6_bb: "<b>Defend the {closer} wide: the squid is dead money.</b> Facing a {open} open, calling {call} into {pot} needs {plain} equity on chips alone, but only {squid} with a fresh squid at stake.",
+    tut6_four: "<b>On 4, every pot is worth {ante}.</b> Dead money is {multiple}× the posts, so {deep} plays like {stack}.",
+    tut6_caveat: "Pot-odds reasoning only: it ignores how much of your equity you actually keep postflop.",
+
+    tab_ranges: "Ranges",
+    rg_realisation: "Postflop assumption",
+    rg_real_calibrated: "Normal",
+    rg_real_low: "Tough",
+    rg_real_high: "Easy",
+    rg_grid_aria: "Range grid, 13 by 13 hand classes",
+    rg_sample_tag: "SAMPLE",
+
+    advanced_label: "Advanced",
+    ante_tooltip: "Maths name: implicit ante. Your result if you win this pot, minus your average result if an opponent wins it.",
+    stat_stack_value: "{value} deep",
+    rules_line: "House rules: each pot's winner takes a squid, 2 for the round's first squid pot. When one player is left on 0, or all 10 are out, each player on 0 pays 100 chips per squid to every holder. First to 5 squids collects 1,000 from each player still on 0.",
+    diff_title: "What's different from normal poker?",
+    diff_bounty_title: "Every pot has a bounty",
+    diff_bounty: "A fresh pot carries {bounty} of squid bounty on top of the chips, about {multiple}× the posts.",
+    diff_bb_title: "Defend the {closer} much wider",
+    diff_bb: "Facing a {open} open, you need {squid} equity instead of {plain}.",
+    diff_insurance_title: "Your first squid is insurance",
+    diff_insurance: "Once you hold a squid you can't end up paying. On 0, you pay in {p_now} of rounds.",
+    diff_four_title: "Watch the player on 4",
+    diff_four: "With a villain on 4 and you on 0, each pot is worth {bounty} to you, not {fresh}.",
+    take_fresh: "Fresh round: every pot carries ~{bounty} of bounty, so defend your blinds with almost anything.",
+    take_last_two: "You're one of the last two on 0: this pot is worth more than the penalty. Fight for it.",
+    take_villain4_zero: "Villain on 4 and you on 0: fight hard for your first squid. It's insurance.",
+    take_villain4_holder: "Villain on 4: you're safe from his jackpot, but you still don't want him winning.",
+    take_me4: "You're one pot from the jackpot: every pot is worth {bounty} to you.",
+    take_me3: "Two pots from the jackpot: every pot is now worth {bounty} to you.",
+    take_zero: "You're still on 0: each pot carries {bounty} of bounty, so play wider than normal.",
+    take_holder: "You already hold a squid, so you can't end up paying. Pots still carry {bounty} for you.",
+    odds_take_wider: "The squid makes this a much easier call: you need {squid} equity, not {plain}.",
+    odds_take_same: "The squid barely changes this call: {squid} equity instead of {plain}.",
+    strip_take: "{position} has the biggest bounty here ({value}), so expect them to fight hardest for the pot.",
+    strip_take_equal: "Every seat has the same bounty here ({value}), so nobody has a special reason to fight harder.",
+    key_take: "Bounties run from {min} to {max}. They peak when someone nears the jackpot.",
+    heat_take: "The closer you get to 5, the more each pot is worth: {low} on 0, {high} on 4.",
+    ending_take: "Most fresh rounds end with {n} players on 0 paying. Only {jackpot} end in a jackpot.",
+    sens_take: "Your seat moves the bounty more than our modelling guesses do: up to {position}, against {model}.",
+    gl_title: "Poker-to-squid dictionary",
+    gl_squid_t: "Squid",
+    gl_squid_d: "A token you win with each pot; the round's first squid pot pays 2. Walks count, chops don't. 10 per round.",
+    gl_count_t: "On 0 / on 4",
+    gl_count_d: "How many squids a player holds. Players on 0 are the ones who pay at the end.",
+    gl_bounty_t: "Squid bounty",
+    gl_bounty_d: "What this pot's squid is worth to you, like a bounty in a PKO. Maths name: implicit ante.",
+    gl_extra_t: "Extra loss if he wins",
+    gl_extra_d: "How much worse it is for you when this particular player takes the pot, compared with an average opponent.",
+    gl_winlose_t: "Win vs lose this pot",
+    gl_winlose_d: "Your bounty plus that extra loss: the whole gap between you winning and him winning.",
+    gl_jackpot_t: "Jackpot",
+    gl_jackpot_d: "First to 5 squids collects 1,000 from every player still on 0.",
+    gl_settle_t: "Settlement",
+    gl_settle_d: "When one player is left on 0, or all 10 squids are out, each player on 0 pays every holder 100 per squid.",
+    gl_walk_t: "Walk",
+    gl_walk_d: "Everyone folds to the BB. He still gets a squid.",
+    gl_chop_t: "Chop",
+    gl_chop_d: "A split pot. Nobody gets a squid.",
+    gl_first_t: "First in",
+    gl_first_d: "Everyone before you folded; you are the first to put chips in.",
+    gl_dead_t: "Dead money",
+    gl_dead_d: "Chips in the pot that nobody has to match. The bounty works like extra dead money.",
+    gl_postflop_t: "Postflop assumption",
+    gl_postflop_d: "How much of your preflop equity you keep after the flop. Tough means less, easy means more.",
+    gl_accuracy_t: "Solver accuracy",
+    gl_accuracy_d: "How much a perfect opponent could still win per 100 hands against the solver's strategy. Smaller is better.",
+    rg_always: "Always {action}",
+    rg_mostly: "Mostly {action} ({share})",
+    rg_mixed: "Mix: {a} {pa} / {b} {pb}",
+
+    rg_loading: "Loading ranges…",
+    rg_load_failed: "Couldn't load this state's ranges.",
+
+    brand: "Squid Lab",
+    m_sample: "Sample ranges",
+    m_monitor: "Squid monitor",
+    m_mode_squids: "Squids",
+    m_mode_button: "Button",
+    m_mode_me: "Me",
+    m_reset: "Reset",
+    m_hand: "Hand so far",
+    m_nearest: "Nearest solved: {name}",
+    m_solved: "Solved",
+    m_blended: "Blended from {n} nearby solves",
+    m_blended_one: "Blended from 1 nearby solve",
+    m_rough: "Rough: nearest solve is {gap} away",
+    m_ev: "EV",
+    m_ev_rare: "Taken under 1% of the time: its average EV would mostly reflect premium hands mixing in",
+    m_tie: "about equal: either is fine",
+    m_impossible: "Not a possible table",
+    m_flop: "Flop",
+    m_over: "Preflop is over. Tap a step.",
+    m_rare: "Not solved: rare spot",
+    m_tier_normal: "Well tested",
+    m_tier_directional: "Directional",
+    m_tier_unreliable: "Rare",
+    m_badge_title: "Seen in {reach} of hands · solver accuracy {accuracy} per 100 hands",
+    m_close: "Close",
+    m_more: "More",
+    m_note_four: "Player on 4 opens: the {closer} 3-bets {three_bet} pts and calls {call} pts vs a fresh round.",
+    m_note_last: "Last two on 0: {position} plays {plays}%, the {closer} defends {defend}%.",
+    m_note_walk: "{closer} on 4, first in: {opens}.",
+    m_note_edge: "Edge vs squid-unaware players: {edge} per 100 hands.",
+    sh_fold: "Fold",
+    sh_check: "Check",
+    sh_call: "Call",
+    sh_limp: "Limp",
+    sh_jam: "All-in",
+    sh_open: "Open {size}",
+    sh_iso: "Iso {size}",
+    sh_3bet: "3-bet {size}",
+    sh_4bet: "4-bet {size}",
+    sh_5bet: "5-bet {size}",
+    m_model: "Model",
+    m_model_real: "Real game",
+    m_model_round1: "Round 1",
+    m_locked: "Raises locked after {cap} players (model limit)",
+    m_name_fresh: "Fresh round",
+    m_name_on: "{position} on {n}",
+    m_name_two_left: "Two left: {a}, {b}",
+    m_name_zeros: "{n} on 0",
+    m_name_joiner: ", ",
+    structure_single_straddle: "25/25 + 50 straddle · 5% rake",
+    structure_round1: "25/50 blinds · no rake",
   },
   zh: {
-    title: "鱿鱼价值实验室",
-    subtitle: "8人桌无限注德州 · 筹码 30,000 · 盲注 25/50 · 600 BB 深 · 每轮 10 只鱿鱼",
-    settings_aria: "设置",
+    subtitle: "8人桌无限注德州 · 筹码 30,000 · {structure} · 每轮 10 只鱿鱼",
     model_label: "谁赢底池",
     model_uniform: "人人均等",
-    model_position: "按位置估计（示意）",
-    chop_label: "平分底池概率",
+    model_position: "按位置（估计）",
+    chop_label: "平分底池比例",
     units_label: "单位",
     unit_bb: "BB",
     unit_chips: "筹码",
     language_label: "语言",
     lang_en: "EN",
     lang_zh: "中文",
-    real_money: "新一轮里，每个底池约带 {ante} ≈ {chips}的鱿鱼价值，约是盲注 75 筹码的 {multiple} 倍。结算时，没有鱿鱼的玩家按每只鱿鱼 100 筹码付给每位持有者；大奖则是由每位仍在 0 只的玩家各付 1,000 筹码（最多 7,000），持有者分文不付。",
 
     table_title: "牌桌",
     mode_aria: "点座位时改的是什么",
@@ -1306,7 +2024,7 @@ const STRINGS = {
     hint_squids: "点座位可循环调整鱿鱼数：0 → 4 → 0。",
     hint_button: "点庄家按钮所在的座位。",
     hint_me: "点你自己的座位。",
-    presets_label: "典型局面",
+    presets_label: "常见局面",
     preset_fresh: "新一轮",
     preset_holders: "4人有鱿鱼",
     preset_z2: "只剩2人没有",
@@ -1341,27 +2059,27 @@ const STRINGS = {
     problem_ten_out: "已发出 {n} 只鱿鱼。第 10 只一发出本轮就结束，所以一轮中途最多只有 9 只。",
     problem_one_zero: "只剩 1 人没有鱿鱼。一出现这种情况，本轮立即结束。",
     problem_no_zero: "每个人都有鱿鱼。只剩 1 人没有时，本轮就已经结束了。",
-    ante_label: "隐含前注",
-    ante_caption: "这个底池你自己赢，比一般对手赢，对你多值这么多。",
+    ante_label: "鱿鱼赏金",
+    ante_caption: "这一锅的鱿鱼对你值多少。",
     alert_four_one: "{names} 再赢一个底池就中大奖",
     alert_four_many: "{names} 再赢一个底池就中大奖",
     alert_three_one: "{names} 离大奖还差两个底池",
     alert_three_many: "{names} 离大奖都只差两个底池",
     names_joiner: "、",
     stat_jackpot: "本轮以大奖结束的概率",
-    stat_hands: "本轮预计还剩几手",
-    stat_multiple: "死钱倍数",
-    stat_stack: "有效筹码",
+    stat_hands: "本轮平均还剩几手",
+    stat_multiple: "底池相当于多了这么多死钱",
+    stat_stack: "筹码打起来像",
     rule_tag: "粗估",
     swing_title: "如果这个对手赢下底池",
-    swing_caption: "差额：和你自己赢下这个底池相比，你少拿多少。",
+    swing_caption: "这锅被这位对手而不是你赢走，你要差多少。",
     swing_head_opponent: "对手",
-    swing_head_swing: "差额",
+    swing_head_swing: "输赢差",
     swing_head_denial: "额外损失",
-    key_ante: "隐含前注",
-    key_denial: "额外损失（被此人赢走时多亏的部分）",
-    key_tick: "隐含前注刻度",
-    swing_row_title: "{position} 赢下：比你自己赢少 {swing}，其中 {denial} 是额外损失",
+    key_ante: "你的赏金",
+    key_denial: "被他赢走的额外损失",
+    key_tick: "赏金刻度",
+    swing_row_title: "{position} 赢下时，你比自己赢少 {swing}，其中 {denial} 是被他赢走的额外损失。",
 
     odds_title: "要不要跟注？",
     odds_note: "底池赔率，单位 {unit}",
@@ -1371,19 +2089,19 @@ const STRINGS = {
     villain_option: "{position}（{seat}，{squids}）",
     odds_plain: "所需胜率（不算鱿鱼）",
     odds_squid: "所需胜率（算上鱿鱼）",
-    odds_formula: "{call} ÷ ({pot} + {call})，对比 {call} ÷ ({pot} + {call} + 对 {position} 的差额 {swing})。",
-    odds_formula_blank: "跟注额 ÷（底池 + 跟注额），对比 跟注额 ÷（底池 + 跟注额 + 对该对手的差额）。",
-    odds_caveat: "这只是底池赔率计算：假设你弃牌时底池归这位对手，也没考虑翻后的权益实现。不是 solver 建议。",
+    odds_formula: "{call} ÷ ({pot} + {call})，对比 {call} ÷ ({pot} + {call} + 对 {position} 的输赢差 {swing})。",
+    odds_formula_blank: "跟注额 ÷（底池 + 跟注额），对比 跟注额 ÷（底池 + 跟注额 + 对该对手的输赢差）。",
+    odds_caveat: "只算底池赔率：假设你弃牌时底池归这位对手，也没考虑翻后怎么打。不是 solver 建议。",
 
-    strip_title: "全桌隐含前注",
+    strip_title: "全桌鱿鱼赏金",
     strip_note: "{unit}，当前局面 · D = 庄位",
     strip_me: "我",
 
-    key_title: "典型局面的隐含前注",
+    key_title: "常见局面的鱿鱼赏金",
     key_note_any: "{unit}，任意座位",
     key_note_position: "{unit}，我在 {position}",
     key_hint: "点条形即可载入该局面。对手从我开始按顺时针就座。",
-    heat_title: "鱿鱼进度与我的隐含前注",
+    heat_title: "鱿鱼进度与你的赏金",
     heat_corner: "我 ↓ · 最多的对手 →",
     heat_caption: "设定：我在原座位，鱿鱼最多的对手坐我下家（{position}），其余六人都是 0 只；庄位和设置与当前一致。加框的格子 = 当前牌桌。",
     heat_cell: "我 {mine} 只，最多的对手 {theirs} 只：{value}",
@@ -1402,18 +2120,18 @@ const STRINGS = {
     sens_position: "只换我的位置",
     sens_model: "只换胜率模型",
     sens_row_title: "{state}：位置 {position}，模型 {model}",
-    sens_note: "数据来自 sensitivity.md：隐含前注的最大值减最小值。位置：用位置估计，把我轮换到全部 8 个座位。模型：我在按钮位，比较 5 种胜率模型（均等、位置估计、两者各加 2% 平分底池，以及位置估计上下浮动 20%）。",
+    sens_note: "数据来自 sensitivity.md：鱿鱼赏金的最大值减最小值。位置：用位置估计，把我轮换到全部 8 个座位。模型：我在按钮位，比较 5 种胜率模型（均等、位置估计、两者各加 2% 平分底池，以及位置估计上下浮动 20%）。",
 
     method_title: "这些数字是怎么算的",
-    method_1: "每手牌由一位玩家赢下底池并拿 1 只鱿鱼（平分底池则谁也不拿），然后庄位顺移一位。我们把整轮当作马尔可夫链，按各人的鱿鱼数和庄位精确求解。",
-    method_2: "每个数值都是按规则算出的精确期望结算。隐含前注 = 你赢下这个底池后的价值，减去由对手赢下时你的平均价值。",
+    method_1: "每手牌由一位玩家赢下底池并拿 1 只鱿鱼（每轮第一个发鱿鱼的底池拿 2 只；平分底池则谁也不拿，这份奖励留给下一位赢家），然后庄位顺移一位。我们把整轮当作马尔可夫链，按各人的鱿鱼数和庄位精确求解。",
+    method_2: "每个数值都是按规则算出的精确期望结算。鱿鱼赏金（即隐含前注）= 你赢下这锅后的价值，减去对手赢下时你的平均价值。",
     method_3: "“人人均等”指每个座位赢下每个底池的机会相同。“按位置估计”按位置调整：大盲位 (BB) 18%、按钮位 (BTN) 16%、关煞位 (CO) 13%、劫持位 (HJ) 12%、中位 (MP) 11%，枪口位 (UTG、UTG+1) 和小盲位 (SB) 各 10%。这是手工设定的示意值，不是实测数据。",
-    method_4: "死钱倍数 =（隐含前注 + 1.5）÷ 1.5，有效筹码 = 600 ÷ 死钱倍数。两者都只是粗略的经验估算，不是 solver 结果。",
+    method_4: "死钱 = 鱿鱼赏金 + 发牌前已投入的 {posts}；筹码打起来的深度 ≈ {deep} ÷（死钱 ÷ {posts}）。两者都只是粗略的经验估算，不是 solver 结果。",
     method_5: "等我们的翻前 solver 结果出来，会用真实胜率取代位置估计。",
     footer: "引擎：value_engine/markov_value.py 的直接移植，已与 Python 结果核对到 0.001 BB。{model}，平分底池 {chop}%：整轮求解用时 {ms} 毫秒。",
 
     tabs_aria: "页面分区",
-    tab_calc: "计算器",
+    tab_calc: "赏金",
     tab_how: "原理讲解",
     tut_intro: "一只鱿鱼凭什么值这个价？本页每个数字都由计算器背后的同一个引擎实时算出，沿用你当前的设置和单位。",
     tut_invalid: "计算器里的牌桌不是一轮中途会出现的局面，这部分暂停显示。请到计算器里改好，或载入一个例子。",
@@ -1421,9 +2139,9 @@ const STRINGS = {
     tut_example_last: "最后一只鱿鱼",
     tut_more: "看推导过程",
 
-    tut1_title: "隐含前注到底算的是什么",
-    tut1_lead: "一个底池里除了筹码还有一只鱿鱼，而鱿鱼会改变这一轮最后怎么结算。隐含前注就是这笔额外的钱：我赢下这锅后的价值，减去对手赢下时我的平均价值。",
-    tut1_formula: "隐含前注 = <i>V</i>(我赢) − 7 个对手分别赢下时 <i>V</i> 的平均值",
+    tut1_title: "鱿鱼赏金到底算的是什么",
+    tut1_lead: "一个底池里除了筹码还有一只鱿鱼，而鱿鱼会改变这一轮最后怎么结算。鱿鱼赏金（即隐含前注）就是这笔额外的钱：我赢下这锅后的价值，减去对手赢下时我的平均价值。",
+    tut1_formula: "赏金 = <i>V</i>(我赢) − 7 个对手分别赢下时 <i>V</i> 的平均值",
     tut1_state: "以计算器当前牌桌的下一手为例：我在 {position}，手上 {squids}。",
     tut1_col_outcome: "下一锅谁赢",
     tut1_col_chance: "概率",
@@ -1432,12 +2150,12 @@ const STRINGS = {
     tut1_chop: "平分底池（没人拿鱿鱼）",
     tut1_v_win: "V(我赢)",
     tut1_v_opponents: "对手赢时的平均值",
-    tut1_ante: "隐含前注",
-    tut1_check: "把每一行按概率加权求和，正好是我现在的价值：{value}。隐含前注本身不看概率，它比的是“我赢”和“一个普通对手赢”。",
+    tut1_ante: "鱿鱼赏金",
+    tut1_check: "把每一行按概率加权求和，正好是我现在的价值：{value}。赏金本身不看概率，它比的是“我赢”和“一个普通对手赢”。",
 
     tut2_title: "新一轮：为什么是 {ante}",
     tut2_lead: "开局时 8 个座位完全对称，整个游戏又是零和的，所以每个人的价值都是 0。打完一手后，没赢的 7 个人彼此仍然对称，所以每人各占 −V(我赢) ÷ 7。",
-    tut2_formula: "隐含前注 = <i>V</i>(我赢) + <i>V</i>(我赢) ÷ 7 = 8/7 · <i>V</i>(我赢)  ⇒  <i>V</i>(我赢) = 7/8 · 隐含前注",
+    tut2_formula: "赏金 = <i>V</i>(我赢) + <i>V</i>(我赢) ÷ 7 = 8/7 · <i>V</i>(我赢)  ⇒  <i>V</i>(我赢) = 7/8 · 赏金",
     tut2_check: "7/8 × {ante} = {seven_eighths}，引擎算出的 V(我赢) 也是 {value_if_i_win}。",
     tut2_check_position: "用位置估计时各座位并不对称，所以只是近似：7/8 × {ante} = {seven_eighths}，引擎给出的是 {value_if_i_win}。",
     tut2_parts_lead: "V(我赢) 从哪来？把我最后的结算按来源拆开。手上一旦有了鱿鱼，我就不可能以 0 只收场，所以赢下第一锅，等于把原本预期要付的钱一笔勾销。",
@@ -1455,20 +2173,20 @@ const STRINGS = {
     tut3_branch_me: "我赢：第 10 只落地，他成了唯一没鱿鱼的人，要按每只 100 付给每位持有者，我收到",
     tut3_branch_other: "他赢：10 只全部发完，只剩我没有，我付 100 × 10",
     tut3_branch_holder: "持有者赢：10 只全部发完，我们俩都没有，各付 1,000",
-    tut3_formula: "差额 = 躲掉的罚款 + 作为新持有者收的钱 = {avoided} + {collected} = {swing}",
+    tut3_formula: "输赢差 = 躲掉的罚款 + 作为新持有者收的钱 = {avoided} + {collected} = {swing}",
     tut3_why: "赢下这一锅一举两得：既免掉了我那 1,000，又让我变成收钱的一方。",
-    tut3_general_lead: "只剩两人没鱿鱼、已经发出 S 只时，我们俩谁先赢下一锅，这一轮就结束，剩下那位一共要付 100 × (S + 1)。S 越大，我面临的账单越大，能翻身的底池也越少，所以隐含前注一路走高。",
+    tut3_general_lead: "只剩两人没鱿鱼、已经发出 S 只时，我们俩谁先赢下一锅，这一轮就结束，剩下那位一共要付 100 × (S + 1)。S 越大，我面临的账单越大，能翻身的底池也越少，所以赏金一路走高。",
     tut3_col_out: "已发出 S 只",
     tut3_col_bill: "我们之一赢锅时的账单",
-    tut3_col_ante: "我的隐含前注",
+    tut3_col_ante: "我的鱿鱼赏金",
     tut3_fill: "持有者每人 1 到 2 只，没人接近大奖。",
 
     tut4_title: "大奖的引力",
-    tut4_lead: "我有 4 只时，赢下这锅就是第 5 只：所有仍在 0 只的玩家立刻每人付 1,000，所以 V(我赢) = {value_if_i_win}。就算这锅被别人赢走，我之后仍有 {p_later} 的机会拿到第 5 只，平均价值依然高达 {value_if_opponent_wins}。两者之差就是隐含前注：{ante}。",
+    tut4_lead: "我有 4 只时，赢下这锅就是第 5 只：所有仍在 0 只的玩家立刻每人付 1,000，所以 V(我赢) = {value_if_i_win}。就算这锅被别人赢走，我之后仍有 {p_later} 的机会拿到第 5 只，平均价值依然高达 {value_if_opponent_wins}。两者之差就是赏金：{ante}。",
     tut4_bar_win: "V(我赢)",
     tut4_bar_opponent: "对手赢时的平均值",
-    tut4_bar_ante: "隐含前注",
-    tut4_villain_lead: "反过来看：对手有 4 只，我是 0 只。我自己的隐含前注跳到 {ante}（新一轮是 {ante_fresh}），因为我的第一只鱿鱼同时能买到对他那份大奖的免疫；但这锅要是被他赢走，我还是比被普通对手赢走多亏 {denial}。这部分就是额外损失。",
+    tut4_bar_ante: "鱿鱼赏金",
+    tut4_villain_lead: "反过来看：对手有 4 只，我是 0 只。我自己的赏金跳到 {ante}（新一轮是 {ante_fresh}），因为我的第一只鱿鱼还能让我免付他的大奖。而这锅要是被他赢走，我比被普通对手赢走还要多亏 {denial}，这就是被他赢走的额外损失。",
     tut4_shared: "最有同样顾虑的是仍在 0 只的那些人：持有者已经免疫了，只有没鱿鱼的玩家才要付他的大奖，而你的第一只鱿鱼就是不当那个人的保险。所以这已经不是两人之间的零和博弈，有 4 只鱿鱼的玩家参与的底池，打法会因为谁手上还是 0 只而明显不同。",
     tut4_bar_villain: "V(他赢)",
 
@@ -1476,44 +2194,166 @@ const STRINGS = {
     tut5_recursion_name: "价值递推",
     tut5_recursion: "<i>V</i>(s) = Σ<sub>w</sub> <i>P</i>(w 赢) · <i>V</i>(w 赢后的 s) + <i>P</i>(平分) · <i>V</i>(s，下一个庄位)；<i>V</i>(一轮结束) = 结算",
     tut5_recursion_example: "计算器当前牌桌：V(我) = {value}。平分底池只会拖慢这一轮，不会改变最后谁付钱。",
-    tut5_ante_name: "隐含前注",
-    tut5_ante: "隐含前注 = <i>V</i>(我赢) − (1/7) Σ<sub>j</sub> <i>V</i>(j 赢)",
+    tut5_ante_name: "鱿鱼赏金（隐含前注）",
+    tut5_ante: "赏金 = <i>V</i>(我赢) − (1/7) Σ<sub>j</sub> <i>V</i>(j 赢)",
     tut5_ante_example: "计算器当前牌桌：{ante}。",
     tut5_fresh_name: "新一轮（各座位对称）",
-    tut5_fresh: "<i>V</i>(我赢) = 7/8 · 隐含前注",
+    tut5_fresh: "<i>V</i>(我赢) = 7/8 · 赏金",
     tut5_fresh_example: "7/8 × {ante} = {value_if_i_win}。",
-    tut5_last_name: "最后一只鱿鱼的差额",
-    tut5_last: "差额 = 躲掉的罚款 + 作为新持有者收的钱",
+    tut5_last_name: "最后一只鱿鱼的输赢差",
+    tut5_last: "输赢差 = 躲掉的罚款 + 作为新持有者收的钱",
     tut5_last_example: "{avoided} + {collected} = {swing}。",
     tut5_odds_name: "算上鱿鱼的底池赔率",
-    tut5_odds: "EV(跟注) − EV(弃牌) = <i>p</i> · (底池 + 跟注额 + 差额) − 跟注额 ≥ 0  ⇒  <i>p</i> ≥ 跟注额 ÷ (底池 + 跟注额 + 差额)",
-    tut5_odds_example: "按你在计算器里的输入：用 {call} 跟进 {pot} 的底池、差额 {swing}，所需胜率从 {plain} 降到 {needed}。",
-    tut5_dead_name: "死钱倍数（粗估）",
-    tut5_dead: "<i>m</i> = (隐含前注 + 1.5) ÷ 1.5，有效筹码 ≈ 600 BB ÷ <i>m</i>",
-    tut5_dead_example: "新一轮：{multiple} 倍，所以 600 BB 打起来像 {stack}。每个底池一开始就躺着“隐含前注 + 盲注”的死钱，翻前值得争的东西多得多，深筹码也就打得像浅筹码。",
+    tut5_odds: "EV(跟注) − EV(弃牌) = <i>p</i> · (底池 + 跟注额 + <i>W</i>) − 跟注额 ≥ 0  ⇒  <i>p</i> ≥ 跟注额 ÷ (底池 + 跟注额 + <i>W</i>)，<i>W</i> = 这锅的输赢差",
+    tut5_odds_example: "按你在计算器里的输入：用 {call} 跟进 {pot} 的底池、输赢差 {swing}，所需胜率从 {plain} 降到 {needed}。",
+    tut5_dead_name: "死钱（粗估）",
+    tut5_dead: "死钱 = 赏金 + {posts}，<i>m</i> = 死钱 ÷ {posts}，筹码打起来像 {deep} ÷ <i>m</i>",
+    tut5_dead_example: "新一轮：死钱是强制下注的 {multiple} 倍，所以 {deep} 打起来像 {stack}。每个底池一开始就躺着“赏金 + 强制下注”的死钱，翻前值得争的东西多得多，深筹码也就打得像浅筹码。",
     tut5_standup_name: "近亲：QuintAce 的 Stand-up 玩法",
-    tut5_standup: "差额 = 6 · val ÷ (N − 1)，N = 还没有鱿鱼的人数",
+    tut5_standup: "他们的差额 = 6 · val ÷ (N − 1)，N = 还没有鱿鱼的人数",
     tut5_standup_example: "val = 3 BB 时：开局（N = 6）是 {fresh}，只剩两人（N = 2）时是 {late}。那是更简单的玩法：6 人桌，每人最多 1 只，只有一个输家。",
 
     tut6_title: "牌桌上怎么想",
-    tut6_insurance: "<b>前期的底池是保险。</b>新一轮的底池约带 {ante}，约是盲注的 {blinds_multiple} 倍，主要因为赢下它能把你以 0 只收场的概率从 {p_now} 降到 {p_win}。",
+    tut6_insurance: "<b>前期的底池是保险。</b>新一轮的底池约带 {ante}，约是强制下注的 {blinds_multiple} 倍，主要因为赢下它能把你以 0 只收场的概率从 {p_now} 降到 {p_win}。",
     tut6_last: "<b>只剩你们两人没鱿鱼时，底池比罚款还值钱。</b>已发出 9 只时值 {swing}：既躲掉 {avoided} 的罚款，又能收 {collected}。",
-    tut6_villain: "<b>有人拿到 4 只、你还是 0 只：你的隐含前注反而跳高，因为你的第一只鱿鱼也买到了免疫。</b>你的隐含前注是 {ante}，要是这锅被他赢走，还要再多亏 {denial}。",
-    tut6_bb: "<b>大盲要宽防：鱿鱼就是死钱。</b>面对 {open} 的开池，用 {call} 跟进 {pot} 的底池，只看筹码需要 {plain} 胜率；算上新一轮的鱿鱼，只要 {squid}。",
-    tut6_four: "<b>你有 4 只时，每个底池都值 {ante}。</b>死钱倍数高达 {multiple} 倍，600 BB 打起来像 {stack}。",
-    tut6_caveat: "以上只是底池赔率层面的推理，没有考虑翻后实际能实现多少权益。",
+    tut6_villain: "<b>有人拿到 4 只、你还是 0 只：你的赏金反而跳高，因为你的第一只鱿鱼也让你免付他的大奖。</b>你的赏金是 {ante}，要是这锅被他赢走，还要再多亏 {denial}。",
+    tut6_bb: "<b>{closer} 要宽防：鱿鱼就是死钱。</b>面对 {open} 的开池，用 {call} 跟进 {pot} 的底池，只看筹码需要 {plain} 胜率；算上新一轮的鱿鱼，只要 {squid}。",
+    tut6_four: "<b>你有 4 只时，每个底池都值 {ante}。</b>死钱高达强制下注的 {multiple} 倍，{deep} 打起来像 {stack}。",
+    tut6_caveat: "以上只是底池赔率层面的推理，没有考虑翻后你实际能保住多少胜率。",
+
+    tab_ranges: "范围",
+    rg_realisation: "翻后假设",
+    rg_real_calibrated: "正常",
+    rg_real_low: "难打",
+    rg_real_high: "好打",
+    rg_grid_aria: "范围表，13 × 13 手牌",
+    rg_sample_tag: "示例",
+
+    advanced_label: "高级设置",
+    ante_tooltip: "数学上叫隐含前注：你赢下这锅后的结果，减去对手赢下时你的平均结果。",
+    stat_stack_value: "{value} 深",
+    rules_line: "规则：每个底池的赢家拿一只鱿鱼，每轮第一个发鱿鱼的底池给两只（头鱼两条）。只剩 1 人没鱿鱼、或 10 只全部发完时，每位 0 只的玩家按每只 100 筹码付给每位持有者。先拿到 5 只的人，向每位还是 0 只的玩家各收 1,000。",
+    diff_title: "和普通德州有什么不同？",
+    diff_bounty_title: "每个底池都带赏金",
+    diff_bounty: "新一轮里，每个底池除了筹码，还带约 {bounty} 的鱿鱼赏金，约是强制下注的 {multiple} 倍。",
+    diff_bb_title: "{closer} 要防得宽得多",
+    diff_bb: "面对 {open} 的开池，所需胜率从 {plain} 降到 {squid}。",
+    diff_insurance_title: "第一只鱿鱼就是保险",
+    diff_insurance: "手上有了鱿鱼，就不会成为付钱的人。还是 0 只时，有 {p_now} 的轮次你最后要付钱。",
+    diff_four_title: "盯紧有 4 只的人",
+    diff_four: "对手有 4 只、你还是 0 只时，每个底池对你值 {bounty}，而不是 {fresh}。",
+    take_fresh: "新一轮：每个底池约带 {bounty} 赏金，盲注位几乎什么牌都可以防。",
+    take_last_two: "只剩你和另一人没鱿鱼：这锅比罚款还值钱，要全力争。",
+    take_villain4_zero: "对手有 4 只、你还是 0 只：拼命拿下第一只鱿鱼，这是保险。",
+    take_villain4_holder: "对手有 4 只：你已经不用付他的大奖，但仍然不想让他赢。",
+    take_me4: "你离大奖只差一锅：每个底池对你都值 {bounty}。",
+    take_me3: "你离大奖还差两锅：现在每个底池对你值 {bounty}。",
+    take_zero: "你还是 0 只：每个底池带 {bounty} 赏金，要比平常打得更宽。",
+    take_holder: "你手上已有鱿鱼，不会成为付钱的人；每个底池对你仍值 {bounty}。",
+    odds_take_wider: "算上鱿鱼，这个跟注容易得多：所需胜率是 {squid}，不是 {plain}。",
+    odds_take_same: "这次跟注，鱿鱼影响不大：所需胜率 {squid}，原本是 {plain}。",
+    strip_take: "这里 {position} 的赏金最大（{value}），他最会为这个底池拼命。",
+    strip_take_equal: "这里每个座位的赏金都一样（{value}），没有谁有特别的理由更拼。",
+    key_take: "赏金从 {min} 到 {max} 不等，有人接近大奖时最高。",
+    heat_take: "你越接近 5 只，每个底池越值钱：0 只时 {low}，4 只时 {high}。",
+    ending_take: "大多数新一轮以 {n} 人没鱿鱼、付钱收场，只有 {jackpot} 以大奖结束。",
+    sens_take: "你的座位对赏金的影响，比我们模型假设的影响更大：最多 {position}，对比 {model}。",
+    gl_title: "鱿鱼术语小词典",
+    gl_squid_t: "鱿鱼",
+    gl_squid_d: "每赢一个底池拿一只；每轮第一个发鱿鱼的底池给两只（头鱼两条）。白拿盲注也算，平分底池不算。每轮共 10 只。",
+    gl_count_t: "0 只 / 4 只",
+    gl_count_d: "玩家手上的鱿鱼数。最后付钱的，是还是 0 只的人。",
+    gl_bounty_t: "鱿鱼赏金",
+    gl_bounty_d: "这一锅的鱿鱼对你值多少，就像 PKO 里的赏金。数学上叫隐含前注。",
+    gl_extra_t: "被他赢走的额外损失",
+    gl_extra_d: "这锅被这位对手赢走，比被一般对手赢走，你多亏多少。",
+    gl_winlose_t: "这锅输赢差",
+    gl_winlose_d: "你的赏金加上那份额外损失：你赢和他赢之间的全部差距。",
+    gl_jackpot_t: "大奖",
+    gl_jackpot_d: "先拿到 5 只的人，向每位还是 0 只的玩家各收 1,000。",
+    gl_settle_t: "结算",
+    gl_settle_d: "只剩 1 人没鱿鱼，或 10 只全部发完时，每位 0 只的玩家按每只 100 付给每位持有者。",
+    gl_walk_t: "白拿盲注",
+    gl_walk_d: "所有人弃牌到大盲。大盲照样拿一只鱿鱼。",
+    gl_chop_t: "平分底池",
+    gl_chop_d: "底池平分，谁都不拿鱿鱼。",
+    gl_first_t: "率先入池",
+    gl_first_d: "你前面的人都弃牌了，你是第一个投钱的人。",
+    gl_dead_t: "死钱",
+    gl_dead_d: "底池里不需要别人跟的钱。鱿鱼赏金就像额外的死钱。",
+    gl_postflop_t: "翻后假设",
+    gl_postflop_d: "翻前的胜率到了翻后能保住多少。难打 = 保住得少，好打 = 保住得多。",
+    gl_accuracy_t: "求解精度",
+    gl_accuracy_d: "面对 solver 的策略，完美对手每 100 手最多还能多赢多少。越小越好。",
+    rg_always: "总是{action}",
+    rg_mostly: "多数{action}（{share}）",
+    rg_mixed: "混合：{a} {pa} / {b} {pb}",
+
+    rg_loading: "正在载入范围…",
+    rg_load_failed: "无法载入这个局面的范围。",
+
+    brand: "鱿鱼实验室",
+    m_sample: "示例范围",
+    m_monitor: "鱿鱼监视器",
+    m_mode_squids: "鱿鱼",
+    m_mode_button: "庄位",
+    m_mode_me: "我",
+    m_reset: "清空",
+    m_hand: "本手行动",
+    m_nearest: "最接近的已解局面：{name}",
+    m_solved: "已求解",
+    m_blended: "由 {n} 个邻近解混合",
+    m_blended_one: "由 1 个邻近解混合",
+    m_rough: "粗略：最近的解相距 {gap}",
+    m_ev: "期望值",
+    m_ev_rare: "该动作不到 1% 的时间被选择：平均期望值主要来自偶尔混入的强牌",
+    m_tie: "两者差不多，都可以",
+    m_impossible: "不可能出现的局面",
+    m_flop: "翻牌",
+    m_over: "翻前已结束，点前面的步骤。",
+    m_rare: "未求解：罕见场景",
+    m_tier_normal: "经过检验",
+    m_tier_directional: "仅供参考",
+    m_tier_unreliable: "罕见",
+    m_badge_title: "出现在 {reach} 的牌局中 · 求解精度：每 100 手 {accuracy}",
+    m_close: "关闭",
+    m_more: "更多",
+    m_note_four: "4 只玩家开池：{closer} 3bet 变化 {three_bet} 个百分点，跟注变化 {call} 个百分点（对比新一轮）。",
+    m_note_last: "只剩两人 0 只：{position} 入池 {plays}%，{closer} 防守 {defend}%。",
+    m_note_walk: "{closer} 有 4 只，率先入池：{opens}。",
+    m_note_edge: "对不懂鱿鱼的玩家：每 100 手 {edge}。",
+    sh_fold: "弃牌",
+    sh_check: "过牌",
+    sh_call: "跟注",
+    sh_limp: "溜入",
+    sh_jam: "全下",
+    sh_open: "开池 {size}",
+    sh_iso: "隔离 {size}",
+    sh_3bet: "3bet {size}",
+    sh_4bet: "4bet {size}",
+    sh_5bet: "5bet {size}",
+    m_model: "模型",
+    m_model_real: "真实牌局",
+    m_model_round1: "第 1 轮",
+    m_locked: "{cap} 人入池后不能再加注（模型限制）",
+    m_name_fresh: "新一轮",
+    m_name_on: "{position} {n} 只",
+    m_name_two_left: "只剩 {a}、{b} 没有",
+    m_name_zeros: "{n} 人 0 只",
+    m_name_joiner: "，",
+    structure_single_straddle: "25/25 + 50 straddle · 5% 抽水",
+    structure_round1: "盲注 25/50 · 无抽水",
   },
 };
 
-const SENSITIVITY = [{"preset":"fresh","position_only_bb":0.26340000000000074,"model_only_bb":0.14939999999999998},{"preset":"holders","position_only_bb":1.3810000000000002,"model_only_bb":0.9337000000000018},{"preset":"z2","position_only_bb":1.665799999999999,"model_only_bb":0.15529999999999866},{"preset":"me3","position_only_bb":4.089100000000002,"model_only_bb":0.39099999999999824},{"preset":"me4","position_only_bb":6.405799999999999,"model_only_bb":2.061300000000003},{"preset":"villain4","position_only_bb":1.1327999999999996,"model_only_bb":0.5588000000000015},{"preset":"villain4me1","position_only_bb":0.7426000000000004,"model_only_bb":0.4593000000000007},{"preset":"desperate","position_only_bb":0,"model_only_bb":0}];
+const SENSITIVITY = [{"preset":"fresh","position_only_bb":0.32530000000000214,"model_only_bb":0.2995999999999981},{"preset":"holders","position_only_bb":1.7608999999999995,"model_only_bb":0.9676000000000009},{"preset":"z2","position_only_bb":1.4147999999999996,"model_only_bb":0.14560000000000173},{"preset":"me3","position_only_bb":4.089100000000002,"model_only_bb":0.39099999999999824},{"preset":"me4","position_only_bb":6.405799999999999,"model_only_bb":2.061300000000003},{"preset":"villain4","position_only_bb":1.1327999999999996,"model_only_bb":0.5588000000000015},{"preset":"villain4me1","position_only_bb":0.7426000000000004,"model_only_bb":0.4593000000000007},{"preset":"desperate","position_only_bb":0,"model_only_bb":0}];
+const DATASETS = [{"id":"single_straddle","schema":"squid-ranges/1","sample":false,"round3":true,"created":"2026-10-11","source":"single_straddle round-3 anchors (solvers/preflop)","model":{"en":"Real game: 25/25 + 50 straddle, 5% rake","zh":"真实牌局：25/25 + 50 straddle，5% 抽水"},"classes":["AA","AKs","AQs","AJs","ATs","A9s","A8s","A7s","A6s","A5s","A4s","A3s","A2s","AKo","KK","KQs","KJs","KTs","K9s","K8s","K7s","K6s","K5s","K4s","K3s","K2s","AQo","KQo","QQ","QJs","QTs","Q9s","Q8s","Q7s","Q6s","Q5s","Q4s","Q3s","Q2s","AJo","KJo","QJo","JJ","JTs","J9s","J8s","J7s","J6s","J5s","J4s","J3s","J2s","ATo","KTo","QTo","JTo","TT","T9s","T8s","T7s","T6s","T5s","T4s","T3s","T2s","A9o","K9o","Q9o","J9o","T9o","99","98s","97s","96s","95s","94s","93s","92s","A8o","K8o","Q8o","J8o","T8o","98o","88","87s","86s","85s","84s","83s","82s","A7o","K7o","Q7o","J7o","T7o","97o","87o","77","76s","75s","74s","73s","72s","A6o","K6o","Q6o","J6o","T6o","96o","86o","76o","66","65s","64s","63s","62s","A5o","K5o","Q5o","J5o","T5o","95o","85o","75o","65o","55","54s","53s","52s","A4o","K4o","Q4o","J4o","T4o","94o","84o","74o","64o","54o","44","43s","42s","A3o","K3o","Q3o","J3o","T3o","93o","83o","73o","63o","53o","43o","33","32s","A2o","K2o","Q2o","J2o","T2o","92o","82o","72o","62o","52o","42o","32o","22"],"realisations":["calibrated","low","high"],"positions":["UTG+1","LJ","HJ","CO","BTN","SB","BB","STR"],"blinds":{"SB":1,"BB":1,"STR":2},"stack_bb":1200,"chips_per_bb":25,"open_bb":24,"states":[],"panels":{"closer":"STR","edge":{"sample":true,"bb_per_100":38},"player_on_four":{"sample":false,"rows":[{"state":"hero_on_four_alone","realisation":"calibrated","opener":"UTG+1","players_on_zero":7,"bb_squids":0,"bb_call_extra_pp":75,"three_bet_extra_pp":5,"tier":"unreliable"},{"state":"hero_on_four_with_holders","realisation":"calibrated","opener":"CO","players_on_zero":3,"bb_squids":0,"bb_call_extra_pp":50,"three_bet_extra_pp":9,"tier":"unreliable"},{"state":"btn_on_four","realisation":"calibrated","opener":"BTN","players_on_zero":7,"bb_squids":0,"bb_call_extra_pp":27,"three_bet_extra_pp":0,"tier":"unreliable"},{"state":"desperate","realisation":"calibrated","opener":"BTN","players_on_zero":2,"bb_squids":1,"bb_call_extra_pp":-11,"three_bet_extra_pp":2,"tier":"directional"},{"state":"villain_on_four_hero_zero","realisation":"calibrated","opener":"BB","players_on_zero":7,"bb_squids":0,"bb_call_extra_pp":26,"three_bet_extra_pp":-2,"tier":"unreliable"},{"state":"villain_on_four_hero_one","realisation":"calibrated","opener":"BB","players_on_zero":6,"bb_squids":1,"bb_call_extra_pp":29,"three_bet_extra_pp":-6,"tier":"unreliable"}]},"last_two":{"sample":false,"state":"last_two_on_zero","realisation":"calibrated","rows":[{"position":"UTG+1","squids":0,"plays_pct":91,"tier":"normal"},{"position":"LJ","squids":2,"plays_pct":17,"tier":"normal"},{"position":"HJ","squids":2,"plays_pct":32,"tier":"normal"},{"position":"CO","squids":2,"plays_pct":100,"tier":"normal"},{"position":"BTN","squids":1,"plays_pct":86,"tier":"unreliable"},{"position":"SB","squids":1,"plays_pct":64,"tier":"unreliable"},{"position":"BB","squids":1,"plays_pct":58,"tier":"unreliable"}],"bb_defend_pct":92},"walk_denial":{"sample":false,"state":"bb_on_four_walk_denial","realisation":"calibrated","rows":[{"position":"CO","size_bb":24,"open_pct":100,"tier":"unreliable"},{"position":"BTN","size_bb":24,"open_pct":98,"tier":"unreliable"},{"position":"SB","size_bb":24,"open_pct":58,"tier":"unreliable"}]}},"solves":[],"files":"round3/single_straddle/"},{"id":"round1","schema":"squid-ranges/1","sample":false,"created":"2026-10-05","source":"round1 preflop solves (MIT ORCD): solvers/preflop/run_state.py + reliability measures","model":{"en":"Round 1 model: 25/50, no straddle, no rake","zh":"第 1 轮模型：盲注 25/50，无 straddle，无抽水"},"classes":["AA","AKs","AQs","AJs","ATs","A9s","A8s","A7s","A6s","A5s","A4s","A3s","A2s","AKo","KK","KQs","KJs","KTs","K9s","K8s","K7s","K6s","K5s","K4s","K3s","K2s","AQo","KQo","QQ","QJs","QTs","Q9s","Q8s","Q7s","Q6s","Q5s","Q4s","Q3s","Q2s","AJo","KJo","QJo","JJ","JTs","J9s","J8s","J7s","J6s","J5s","J4s","J3s","J2s","ATo","KTo","QTo","JTo","TT","T9s","T8s","T7s","T6s","T5s","T4s","T3s","T2s","A9o","K9o","Q9o","J9o","T9o","99","98s","97s","96s","95s","94s","93s","92s","A8o","K8o","Q8o","J8o","T8o","98o","88","87s","86s","85s","84s","83s","82s","A7o","K7o","Q7o","J7o","T7o","97o","87o","77","76s","75s","74s","73s","72s","A6o","K6o","Q6o","J6o","T6o","96o","86o","76o","66","65s","64s","63s","62s","A5o","K5o","Q5o","J5o","T5o","95o","85o","75o","65o","55","54s","53s","52s","A4o","K4o","Q4o","J4o","T4o","94o","84o","74o","64o","54o","44","43s","42s","A3o","K3o","Q3o","J3o","T3o","93o","83o","73o","63o","53o","43o","33","32s","A2o","K2o","Q2o","J2o","T2o","92o","82o","72o","62o","52o","42o","32o","22"],"positions":["UTG","UTG+1","MP","HJ","CO","BTN","SB","BB"],"realisations":["calibrated","low","high"],"states":[{"id":"fresh","name":{"en":"Fresh round","zh":"新一轮"},"squids":[0,0,0,0,0,0,0,0],"realisations":["calibrated","low","high"]},{"id":"mid_round_four_holders","name":{"en":"4 holders, 4 on 0","zh":"4 人有鱿鱼，4 人还是 0 只"},"squids":[1,0,0,0,0,1,1,1],"realisations":["calibrated","low","high"]},{"id":"z_two_standoff","name":{"en":"Two left on 0: SB and BB","zh":"只剩 SB、BB 没鱿鱼"},"squids":[1,2,1,1,1,2,0,0],"realisations":["calibrated","low","high"]},{"id":"hero_on_three","name":{"en":"BTN on 3","zh":"BTN 有 3 只"},"squids":[0,1,0,0,1,3,0,1],"realisations":["calibrated","low","high"]},{"id":"hero_on_four_alone","name":{"en":"UTG on 4, everyone else on 0","zh":"UTG 有 4 只，其余都是 0 只"},"squids":[4,0,0,0,0,0,0,0],"realisations":["calibrated","low","high"]},{"id":"hero_on_four_with_holders","name":{"en":"CO on 4, 3 players on 0","zh":"CO 有 4 只，3 人还是 0 只"},"squids":[0,1,0,1,4,1,0,1],"realisations":["calibrated","low","high"]},{"id":"villain_on_four_hero_zero","name":{"en":"SB on 4, everyone else on 0","zh":"SB 有 4 只，其余都是 0 只"},"squids":[0,0,0,0,0,0,4,0],"realisations":["calibrated","low","high"]},{"id":"villain_on_four_hero_one","name":{"en":"SB on 4, BB on 1","zh":"SB 有 4 只，BB 有 1 只"},"squids":[0,0,0,0,0,0,4,1],"realisations":["low","high"]},{"id":"villain_on_four_several_zero","name":{"en":"BB on 4, 5 players on 0","zh":"BB 有 4 只，5 人还是 0 只"},"squids":[1,0,0,2,0,0,0,4],"realisations":["calibrated","low","high"]},{"id":"last_two_on_zero","name":{"en":"Last two on 0: UTG and BB","zh":"只剩 UTG、BB 没鱿鱼"},"squids":[0,2,2,2,1,1,1,0],"realisations":["calibrated","low","high"]},{"id":"desperate","name":{"en":"Two left on 0 (SB, BB), BTN on 4","zh":"只剩 SB、BB 没鱿鱼，BTN 有 4 只"},"squids":[1,1,1,1,1,4,0,0],"realisations":["calibrated","low","high"]},{"id":"bb_on_four_walk_denial","name":{"en":"BB on 4, everyone else on 0","zh":"BB 有 4 只，其余都是 0 只"},"squids":[0,0,0,0,0,0,0,4],"realisations":["calibrated","low","high"]},{"id":"btn_on_four","name":{"en":"BTN on 4, everyone else on 0","zh":"BTN 有 4 只，其余都是 0 只"},"squids":[0,0,0,0,0,4,0,0],"realisations":["low","high"]}],"panels":{"closer":"BB","edge":{"sample":true,"bb_per_100":38},"player_on_four":{"sample":false,"rows":[{"state":"hero_on_four_alone","realisation":"calibrated","opener":"UTG","players_on_zero":7,"bb_squids":0,"bb_call_extra_pp":-4,"three_bet_extra_pp":5,"tier":"unreliable"},{"state":"hero_on_four_with_holders","realisation":"calibrated","opener":"CO","players_on_zero":3,"bb_squids":1,"bb_call_extra_pp":-22,"three_bet_extra_pp":21,"tier":"unreliable"},{"state":"btn_on_four","realisation":"low","opener":"BTN","players_on_zero":7,"bb_squids":0,"bb_call_extra_pp":-2,"three_bet_extra_pp":3,"tier":"unreliable"},{"state":"desperate","realisation":"calibrated","opener":"BTN","players_on_zero":2,"bb_squids":0,"bb_call_extra_pp":0,"three_bet_extra_pp":1,"tier":"unreliable"},{"state":"villain_on_four_hero_zero","realisation":"calibrated","opener":"SB","players_on_zero":7,"bb_squids":0,"bb_call_extra_pp":-6,"three_bet_extra_pp":6,"tier":"unreliable"},{"state":"villain_on_four_hero_one","realisation":"low","opener":"SB","players_on_zero":6,"bb_squids":1,"bb_call_extra_pp":-9,"three_bet_extra_pp":0,"tier":"unreliable"}]},"last_two":{"sample":false,"state":"last_two_on_zero","realisation":"calibrated","rows":[{"position":"UTG","squids":0,"plays_pct":99,"tier":"normal"},{"position":"UTG+1","squids":2,"plays_pct":32,"tier":"directional"},{"position":"MP","squids":2,"plays_pct":38,"tier":"directional"},{"position":"HJ","squids":2,"plays_pct":50,"tier":"directional"},{"position":"CO","squids":1,"plays_pct":60,"tier":"directional"},{"position":"BTN","squids":1,"plays_pct":93,"tier":"unreliable"},{"position":"SB","squids":1,"plays_pct":74,"tier":"unreliable"}],"bb_defend_pct":100},"walk_denial":{"sample":false,"state":"bb_on_four_walk_denial","realisation":"calibrated","rows":[{"position":"CO","size_bb":2.5,"open_pct":88,"tier":"unreliable"},{"position":"BTN","size_bb":2.5,"open_pct":100,"tier":"unreliable"},{"position":"SB","size_bb":2.5,"open_pct":89,"tier":"unreliable"}]}},"solves":[],"files":"round1_ranges/"}];
+let RANGES = DATASETS[0];
 // Squid Value Lab page logic: the table builder, the read-out for "me", pot odds and context charts, all from engine.js.
 "use strict";
 
 const { create_engine, position_name, NUM_PLAYERS, CHIPS_PER_BB } = SquidEngine;
 const SEATS = [...Array(NUM_PLAYERS).keys()];
-const STACK_BB = 600;
-const BLINDS_BB = 1.5;
-const BLINDS_CHIPS = 75;
 const STORAGE_KEY = "squid-value-lab-state";
 const LANGUAGE_KEY = "squid-value-lab-language";
 const CJK_FONT_URL = "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap";
@@ -1524,11 +2364,11 @@ const ENDINGS_SHOWN = [
   { name: "3 losers", losers: 3 }, { name: "4 losers", losers: 4 }, { name: "5 losers", losers: 5 },
 ];
 
-// the brief's key states, my squids first, then opponents clockwise from me (labels live in strings.js)
+// the brief's key states (all reachable under 头鱼两条: the first holder has 2), my squids first, then opponents clockwise from me (labels live in strings.js)
 const PRESETS = [
   { id: "fresh", counts: [0, 0, 0, 0, 0, 0, 0, 0] },
-  { id: "holders", counts: [0, 1, 1, 1, 1, 0, 0, 0] },
-  { id: "z2", counts: [0, 1, 1, 1, 1, 1, 1, 0] },
+  { id: "holders", counts: [0, 2, 1, 1, 1, 0, 0, 0] },
+  { id: "z2", counts: [0, 2, 1, 1, 1, 1, 1, 0] },
   { id: "me3", counts: [3, 0, 0, 0, 0, 0, 0, 0] },
   { id: "me4", counts: [4, 0, 0, 0, 0, 0, 0, 0] },
   { id: "villain4", counts: [0, 4, 0, 0, 0, 0, 0, 0] },
@@ -1536,10 +2376,11 @@ const PRESETS = [
   { id: "desperate", counts: [0, 4, 1, 1, 1, 1, 1, 0] },
 ];
 
-// opening state: "villain on 4" with me in the CO (button one seat clockwise of me); pot and call are kept in BB
+// opening state: a fresh round with me in the straddle seat (UTG, three seats after the button), the real game's closer;
+// pot and call are kept in engine BB (50 chips): call 600 into 700, a single 600 open over 100 chips of posts
 const state = {
-  counts: [0, 4, 0, 0, 0, 0, 0, 0], button: 1, me: 0, mode: "squids",
-  model: "uniform", chop: 0, unit: "bb", language: "en", pot: 12, call: 8, villain: null,
+  counts: [0, 0, 0, 0, 0, 0, 0, 0], button: 5, me: 0, mode: "squids",
+  model: "uniform", chop: 0, unit: "chips", language: "en", pot: 14, call: 12, villain: null,
 };
 
 const $ = (id) => document.getElementById(id);
@@ -1548,12 +2389,26 @@ const fixed = (number, digits = 1) => number.toFixed(digits);
 const percent = (p) => (Math.abs(p) < 1e-12 ? "0%" : p < 0.01 && p > 0 ? `${(100 * p).toFixed(2)}%` : `${(100 * p).toFixed(1)}%`);
 const opponents_of = (seat) => SEATS.filter((other) => other !== seat);
 const clockwise_from = (seat) => SEATS.map((step) => (seat + step) % NUM_PLAYERS);
-const position_of = (seat) => position_name(seat, state.button);
+// seat names follow the main screen's data set (UTG+1 ... STR in the real game); main_view.js defines position_at_seat
+const position_of = (seat) => position_at_seat(seat);
+
+/** The table's money facts from the active data set, in engine BB (50 chips): posts, the closer's post, smallest open, stack, display BB in chips. */
+function table_facts() {
+  const display_chips = RANGES.chips_per_bb || CHIPS_PER_BB;
+  const blinds = RANGES.blinds || { SB: 0.5, BB: 1 };
+  const engine_bb = (data_bb) => (data_bb * display_chips) / CHIPS_PER_BB;
+  const closer = RANGES.positions[RANGES.positions.length - 1];
+  return {
+    display_chips, closer, posts_bb: engine_bb(sum(Object.values(blinds))), closer_post_bb: engine_bb(blinds[closer] || 1),
+    open_bb: engine_bb(RANGES.open_bb || 2.5), stack_bb: engine_bb(RANGES.stack_bb || 600),
+  };
+}
 
 /** Page text in the current language, with {name} placeholders filled from values. */
 function t(key, values = {}) {
-  const text = STRINGS[state.language][key] ?? STRINGS.en[key];
-  return text.replace(/\{(\w+)\}/g, (_, name) => String(values[name]));
+  const text = (STRINGS[state.language][key] ?? STRINGS.en[key]).replace(/\{(\w+)\}/g, (_, name) => String(values[name]));
+  // Chinese: drop a space left between two Chinese characters by a filled-in amount ("587 筹码 赏金" -> "587 筹码赏金")
+  return state.language === "zh" ? text.replace(/([\u4e00-\u9fff]) (?=[\u4e00-\u9fff])/g, "$1") : text;
 }
 
 const seat_label = (seat) => t("seat", { n: seat + 1 });
@@ -1566,7 +2421,8 @@ const unit_name = (unit = state.unit) => t(unit === "bb" ? "unit_bb" : "unit_chi
 
 /** A BB amount as a bare number in the given unit (chips are whole and comma-grouped). */
 function number_in(bb, unit = state.unit, digits = 1) {
-  return unit === "bb" ? fixed(bb, digits) : Math.round(bb * CHIPS_PER_BB).toLocaleString("en-US");
+  // bb is in engine BB (50 chips); shown BB are the table's (25 chips in the real game)
+  return unit === "bb" ? fixed((bb * CHIPS_PER_BB) / table_facts().display_chips, digits) : Math.round(bb * CHIPS_PER_BB).toLocaleString("en-US");
 }
 
 /** A BB amount with its unit, e.g. "12.6 BB" or "630 chips". */
@@ -1646,7 +2502,7 @@ function load_state() {
       counts: saved.counts, button: saved.button, me: saved.me,
       model: saved.model === "position_weighted" ? "position_weighted" : "uniform",
       chop: Math.min(5, Math.max(0, Number(saved.chop) || 0)),
-      unit: saved.unit === "chips" ? "chips" : "bb",
+      unit: saved.unit === "bb" ? "bb" : "chips",
       pot: Number(saved.pot) >= 0 ? Number(saved.pot) : state.pot,
       call: Number(saved.call) >= 0 ? Number(saved.call) : state.call,
     });
@@ -1663,11 +2519,15 @@ function load_cjk_font() {
   document.head.appendChild(link);
 }
 
+const GLOSSARY = ["squid", "count", "bounty", "extra", "winlose", "jackpot", "settle", "walk", "chop", "first", "dead", "postflop", "accuracy"];
+
 function apply_language() {
   document.documentElement.lang = state.language === "zh" ? "zh-CN" : "en";
   if (state.language === "zh") load_cjk_font();
   for (const element of document.querySelectorAll("[data-i18n]")) element.textContent = t(element.dataset.i18n);
   for (const element of document.querySelectorAll("[data-i18n-html]")) element.innerHTML = t(element.dataset.i18nHtml);
+  $("glossary-list").innerHTML = GLOSSARY.map((term) => `<dt>${t(`gl_${term}_t`)}</dt><dd>${t(`gl_${term}_d`)}</dd>`).join("");
+  for (const element of document.querySelectorAll("[data-i18n-title]")) element.title = t(element.dataset.i18nTitle);
   for (const element of document.querySelectorAll("[data-i18n-aria]")) element.setAttribute("aria-label", t(element.dataset.i18nAria));
   for (const preset of PRESETS) $(`preset-${preset.id}`).textContent = t(`preset_${preset.id}`);
   set_mode(state.mode);
@@ -1779,14 +2639,42 @@ function read_state(engine) {
   };
 }
 
-function render_real_money(engine) {
-  const fresh_ante = engine.implicit_ante(Array(NUM_PLAYERS).fill(0), button_for_my_position(), 0);
-  const chips_rounded = Math.round((fresh_ante * CHIPS_PER_BB) / 10) * 10;
-  $("real-line").innerHTML = t("real_money", {
-    ante: `<b>${amount(fresh_ante, "bb")}</b>`,
-    chips: `<b>${chips_rounded.toLocaleString("en-US")} ${unit_name("chips")}</b>`,
-    multiple: Math.round((fresh_ante * CHIPS_PER_BB) / BLINDS_CHIPS),
-  });
+/** "What's different from normal poker?": four cards, every number from the live engine via SquidTutorial. */
+function render_differences(engine) {
+  const button = button_for_my_position();
+  const table = table_facts();
+  const fresh = SquidTutorial.fresh_round(engine, button, table);
+  const defence = SquidTutorial.big_blind_defence(fresh.ante, table);
+  const villain = SquidTutorial.jackpot(engine, button, table).villain_on_four;
+  const bold = (text) => `<b>${text}</b>`;
+  const cards = [
+    ["diff_bounty", { bounty: bold(amount(fresh.ante)), multiple: Math.round(fresh.ante / table_facts().posts_bb) }],
+    ["diff_bb", { open: amount(defence.open), squid: bold(percent(defence.with_squid)), plain: percent(defence.plain) }],
+    ["diff_insurance", { p_now: bold(percent(fresh.parts_now.p_pay)) }],
+    ["diff_four", { bounty: bold(amount(villain.ante)), fresh: amount(fresh.ante) }],
+  ];
+  $("diff-cards").innerHTML = cards.map(([key, values]) => `<article class="diff-card"><h3>${t(`${key}_title`, { closer: table.closer })}</h3><p>${t(key, values)}</p></article>`).join("");
+}
+
+/** The Bounty tab's subtitle and dead-money note, from the active data set's structure. */
+function render_table_text() {
+  const { posts_bb, stack_bb } = table_facts();
+  $("subtitle").textContent = t("subtitle", { structure: t(`structure_${RANGES.id === "single_straddle" ? RANGES.id : "round1"}`) });
+  $("method-4").textContent = t("method_4", { posts: amount(posts_bb, "bb"), deep: amount(stack_bb, "bb", 0) });
+}
+
+/** One plain-words line for the answer panel, chosen from the table's situation. */
+function answer_takeaway(ante) {
+  const mine = state.counts[state.me];
+  const others = opponents_of(state.me).map((seat) => state.counts[seat]);
+  const on_zero = state.counts.filter((count) => count === 0).length;
+  const bounty = amount(ante);
+  if (state.counts.every((count) => count === 0)) return t("take_fresh", { bounty });
+  if (mine === 4) return t("take_me4", { bounty });
+  if (mine === 3) return t("take_me3", { bounty });
+  if (mine === 0 && on_zero === 2) return t("take_last_two");
+  if (others.includes(4)) return t(mine === 0 ? "take_villain4_zero" : "take_villain4_holder");
+  return t(mine === 0 ? "take_zero" : "take_holder", { bounty });
 }
 
 function render_answer(read, problem) {
@@ -1798,20 +2686,22 @@ function render_answer(read, problem) {
   const dash = "–";
   if (!read) {
     for (const id of ["hero-ante", "stat-jackpot", "stat-hands", "stat-multiple", "stat-stack"]) $(id).textContent = dash;
-    for (const id of ["hero-secondary", "stat-stack-secondary"]) $(id).textContent = "";
+    for (const id of ["hero-secondary", "stat-stack-secondary", "take-answer"]) $(id).textContent = "";
     $("swing-list").innerHTML = "";
     $("alert").hidden = true;
     return;
   }
-  const multiple = (read.ante + BLINDS_BB) / BLINDS_BB;
-  const stack_bb = STACK_BB / multiple;
+  const { posts_bb, stack_bb: deep_bb } = table_facts();
+  const multiple = (read.ante + posts_bb) / posts_bb;
+  const stack_bb = deep_bb / multiple;
   $("hero-ante").textContent = number_in(read.ante, state.unit, 2);
   $("hero-secondary").textContent = also(read.ante, 2);
   $("stat-jackpot").textContent = percent(read.endings.jackpot);
   $("stat-hands").textContent = fixed(read.hands_left);
-  $("stat-multiple").textContent = `${fixed(multiple)}×`;
-  $("stat-stack").textContent = amount(stack_bb, state.unit, 0);
-  $("stat-stack-secondary").textContent = also(stack_bb, 0);
+  $("take-answer").textContent = answer_takeaway(read.ante);
+  $("stat-multiple").textContent = amount(read.ante + posts_bb);
+  $("stat-stack").textContent = t("stat_stack_value", { value: amount(stack_bb, "bb", 0) });
+  $("stat-stack-secondary").textContent = `≈ ${amount(stack_bb, "chips")}`;
   render_alert();
   render_swings(read);
 }
@@ -1848,8 +2738,8 @@ function render_swings(read) {
 
 // Pot odds against one villain; the inputs take the unit currently shown.
 function render_odds_inputs() {
-  const shown = (bb) => (state.unit === "bb" ? String(Number(bb.toFixed(2))) : String(Math.round(bb * CHIPS_PER_BB)));
-  const step = state.unit === "bb" ? "0.5" : "25";
+  const shown = (bb) => (state.unit === "bb" ? String(Number(((bb * CHIPS_PER_BB) / table_facts().display_chips).toFixed(2))) : String(Math.round(bb * CHIPS_PER_BB)));
+  const step = state.unit === "bb" ? "1" : "25";
   for (const [id, bb] of [["pot-size", state.pot], ["call-amount", state.call]]) {
     $(id).value = shown(bb);
     $(id).step = step;
@@ -1859,7 +2749,7 @@ function render_odds_inputs() {
 }
 
 function read_odds_inputs() {
-  const per_unit = state.unit === "bb" ? 1 : CHIPS_PER_BB;
+  const per_unit = state.unit === "bb" ? CHIPS_PER_BB / table_facts().display_chips : CHIPS_PER_BB;
   state.pot = Number($("pot-size").value) / per_unit;
   state.call = Number($("call-amount").value) / per_unit;
 }
@@ -1893,6 +2783,9 @@ function render_odds(read) {
     span.style.left = `${100 * Math.min(plain, with_squid)}%`;
     span.style.width = `${100 * Math.abs(plain - with_squid)}%`;
   }
+  const helps = plain !== null && with_squid !== null && plain - with_squid > 0.05;
+  $("take-odds").textContent = plain !== null && with_squid !== null
+    ? t(helps ? "odds_take_wider" : "odds_take_same", { squid: percent(with_squid), plain: percent(plain) }) : "";
   $("odds-formula").textContent = row && valid
     ? t("odds_formula", { call: number_in(call), pot: number_in(pot), swing: number_in(row.swing), position: position_of(row.seat) })
     : t("odds_formula_blank");
@@ -1910,6 +2803,11 @@ function render_strip(read) {
   const antes = read ? read.seat_antes : SEATS.map(() => null);
   const top = read ? Math.max(...antes) : 1;
   $("strip-note").textContent = t("strip_note", { unit: unit_name() });
+  const leader = read ? SEATS.reduce((best, seat) => (antes[seat] > antes[best] ? seat : best), 0) : null;
+  const all_equal = read && Math.max(...antes) - Math.min(...antes) < 0.05;
+  $("take-strip").textContent = !read ? "" : all_equal
+    ? t("strip_take_equal", { value: amount(antes[leader]) })
+    : t("strip_take", { position: position_of(leader), value: amount(antes[leader]) });
   $("seat-strip").innerHTML = clockwise_from(0).map((seat) => {
     const ante = antes[seat];
     const style = ante === null ? "background:var(--surface-2)" : ramp_style(ante / top);
@@ -1934,6 +2832,8 @@ function render_key_states(engine) {
   $("key-note").textContent = state.model === "uniform"
     ? t("key_note_any", { unit: unit_name() })
     : t("key_note_position", { unit: unit_name(), position: position_of(state.me) });
+  const antes = rows.map((row) => row.ante);
+  $("take-key").textContent = t("key_take", { min: amount(Math.min(...antes)), max: amount(Math.max(...antes)) });
   $("key-axis").innerHTML = [0, 0.5, 1].map((share) => `<span style="left:${100 * share}%">${number_in(axis_max * share, state.unit, 0)}</span>`).join("");
   $("key-bars").innerHTML = rows.map(({ preset, ante }) =>
     `<button type="button" class="hbar${current && current.id === preset.id ? " current" : ""}" id="key-${preset.id}" data-preset="${preset.id}" title="${preset_name(preset)}: ${amount(ante, state.unit, 2)} (${also(ante, 2)})">`
@@ -1963,6 +2863,7 @@ function render_heatmap(engine) {
     return `<td class="${is_now(mine, theirs) ? "now" : ""}" style="${ramp_style((value - low) / (high - low))}" title="${title}">${number_in(value)}</td>`;
   }).join("")}</tr>`).join("");
   $("heat-note").textContent = unit_name();
+  $("take-heat").textContent = t("heat_take", { low: amount(grid[0][0]), high: amount(grid[4][0]) });
   $("heat").innerHTML = `<caption>${t("heat_caption", { position: position_of(villain) })}</caption>${header}${body}`;
 }
 
@@ -1982,6 +2883,9 @@ function render_endings(engine, read) {
     + column(fresh[ending.name], "s2", `${t("ending_fresh")}, ${ending_label(ending, false)}`)
     + (here ? column(here[ending.name], "s1", `${t("ending_here")}, ${ending_label(ending, false)}`) : "") + "</div>").join("");
   $("ending-labels").innerHTML = ENDINGS_SHOWN.map((ending) => `<span>${ending_label(ending, true)}</span>`).join("");
+  const losers = ENDINGS_SHOWN.filter((ending) => ending.losers > 0);
+  const typical = losers.reduce((best, ending) => (fresh[ending.name] > fresh[best.name] ? ending : best));
+  $("take-ending").textContent = t("ending_take", { n: typical.losers, jackpot: percent(fresh.jackpot) });
   $("ending-note").textContent = t("ending_note", { hands: fixed(engine.expected_hands_remaining(Array(NUM_PLAYERS).fill(0), 0), 2), top });
 }
 
@@ -1990,6 +2894,8 @@ function render_sensitivity() {
   const digits = 2;
   const line = (value, series) => `<span class="pair-line"><span class="pair-fill ${series}" style="width:${(100 * value) / top}%"></span><span class="pair-value">${number_in(value, state.unit, digits)}</span></span>`;
   $("sens-note").textContent = t("sens_unit", { unit: unit_name() });
+  const most = (field) => Math.max(...SENSITIVITY.map((row) => row[field]));
+  $("take-sens").textContent = t("sens_take", { position: amount(most("position_only_bb")), model: amount(most("model_only_bb")) });
   $("sensitivity-bars").innerHTML = SENSITIVITY.map((row) => {
     const name = t(`name_${row.preset}`);
     const title = t("sens_row_title", { state: name, position: amount(row.position_only_bb, state.unit, digits), model: amount(row.model_only_bb, state.unit, digits) });
@@ -1997,12 +2903,13 @@ function render_sensitivity() {
   }).join("");
 }
 
-// Tabs: "calc" and "how", deep-linked by the bare hash #how.
-const VIEWS = ["calc", "how"];
-let current_view = "calc";
+// Tabs: the main ranges screen (default), bounty maths and the tutorial, deep-linked by a bare hash (#bounty, #help).
+const VIEWS = ["ranges", "calc", "how"];
+const VIEW_OF_HASH = { ranges: "ranges", calc: "calc", bounty: "calc", how: "how", help: "how" };
+let current_view = "ranges";
 
 function show_view(view) {
-  current_view = VIEWS.includes(view) ? view : "calc";
+  current_view = VIEWS.includes(view) ? view : "ranges";
   for (const name of VIEWS) {
     const selected = name === current_view;
     $(`view-${name}`).hidden = !selected;
@@ -2010,10 +2917,11 @@ function show_view(view) {
     $(`tab-${name}`).tabIndex = selected ? 0 : -1;
   }
   if (current_view === "how") render_tutorial(current_engine());
+  if (current_view === "ranges") render_main();
 }
 
 function view_from_hash() {
-  return location.hash === "#how" ? "how" : "calc";
+  return VIEW_OF_HASH[location.hash.slice(1)] || "ranges";
 }
 
 // The "How it works" tab: every figure comes from SquidTutorial, which reads the solved engine.
@@ -2055,9 +2963,9 @@ const step_heading = (step, text) => `<span class="tut-step">${step}</span><span
 
 function render_tutorial(engine) {
   const button = button_for_my_position();
-  const fresh = SquidTutorial.fresh_round(engine, button);
+  const fresh = SquidTutorial.fresh_round(engine, button, table_facts());
   const last = SquidTutorial.last_squid(engine, button, SquidEngine.settle_round);
-  const jackpot = SquidTutorial.jackpot(engine, button);
+  const jackpot = SquidTutorial.jackpot(engine, button, table_facts());
   const problem = state_problem(state.counts);
   const current = problem ? null : SquidTutorial.one_step(engine, state.counts, state.button, state.me);
   render_tutorial_examples();
@@ -2170,24 +3078,24 @@ function render_formula_sheet(engine, current, fresh, last) {
     ["tut5_odds", odds
       ? { call: amount(state.call), pot: amount(state.pot), swing: amount(villain_row.swing), needed: percent(odds.with_squid), plain: percent(odds.plain) }
       : { call: dash, pot: dash, swing: dash, needed: dash, plain: dash }],
-    ["tut5_dead", { multiple: fixed(fresh.multiple), stack: amount(fresh.stack, "bb", 0) }],
+    ["tut5_dead", { multiple: fixed(fresh.multiple), stack: amount(fresh.stack, "bb", 0), posts: amount(table_facts().posts_bb, "bb"), deep: amount(table_facts().stack_bb, "bb", 0) }],
     ["tut5_standup", { fresh: amount(standup.fresh), late: amount(standup.late) }],
   ];
   $("tut5-sheet").innerHTML = entries.map(([key, values]) => {
     const example_key = key === "tut5_recursion" ? "tut5_recursion_example" : `${key}_example`;
-    return `<dt>${t(`${key}_name`)}</dt><dd class="formula">${t(key)}</dd><dd class="example">${t(example_key, values)}</dd>`;
+    return `<dt>${t(`${key}_name`)}</dt><dd class="formula">${t(key, values)}</dd><dd class="example">${t(example_key, values)}</dd>`;
   }).join("");
 }
 
 function render_table_rules(fresh, last, jackpot) {
-  const defence = SquidTutorial.big_blind_defence(fresh.ante);
+  const defence = SquidTutorial.big_blind_defence(fresh.ante, table_facts());
   const four = jackpot.on_four;
   const rules = [
     t("tut6_insurance", { ante: amount(fresh.ante), blinds_multiple: Math.round(fresh.blinds_multiple), p_now: percent(fresh.parts_now.p_pay), p_win: percent(fresh.parts_win.p_pay) }),
     t("tut6_last", { swing: amount(last.swing), avoided: amount(last.penalty_avoided), collected: amount(last.collected) }),
     t("tut6_villain", { ante: amount(jackpot.villain_on_four.ante), denial: amount(jackpot.villain_on_four.denial) }),
-    t("tut6_bb", { open: amount(defence.open), call: amount(defence.call), pot: amount(defence.pot), plain: percent(defence.plain), squid: percent(defence.with_squid) }),
-    t("tut6_four", { ante: amount(four.ante), multiple: fixed(four.multiple), stack: amount(four.stack, "bb", 0) }),
+    t("tut6_bb", { closer: table_facts().closer, open: amount(defence.open), call: amount(defence.call), pot: amount(defence.pot), plain: percent(defence.plain), squid: percent(defence.with_squid) }),
+    t("tut6_four", { ante: amount(four.ante), multiple: fixed(four.multiple), stack: amount(four.stack, "bb", 0), deep: amount(table_facts().stack_bb, "bb", 0) }),
   ];
   $("tut6-rules").innerHTML = rules.map((rule) => `<li>${rule}</li>`).join("");
 }
@@ -2198,7 +3106,8 @@ function update() {
   const problem = state_problem(state.counts);
   const read = problem ? null : read_state(engine);
   render_table();
-  render_real_money(engine);
+  render_differences(engine);
+  render_table_text();
   render_answer(read, problem);
   render_villain_options(read);
   render_odds(read);
@@ -2208,6 +3117,7 @@ function update() {
   render_endings(engine, read);
   render_sensitivity();
   if (current_view === "how") render_tutorial(engine);
+  if (current_view === "ranges") render_main();
   const model = t(state.model === "uniform" ? "model_uniform" : "model_position");
   $("footer").textContent = t("footer", { model, chop: state.chop, ms: Math.round(engine.solve_ms) });
   save_state();
@@ -2245,8 +3155,15 @@ function wire_controls() {
   $("villain-seat").addEventListener("change", (event) => { state.villain = Number(event.target.value); update_odds(); });
   $("odds-form").addEventListener("submit", (event) => event.preventDefault());
   for (const view of VIEWS) $(`tab-${view}`).addEventListener("click", () => { location.hash = view; });
-  $("tab-calc").addEventListener("keydown", (event) => { if (event.key === "ArrowRight") { location.hash = "how"; $("tab-how").focus(); } });
-  $("tab-how").addEventListener("keydown", (event) => { if (event.key === "ArrowLeft") { location.hash = "calc"; $("tab-calc").focus(); } });
+  for (const [index, view] of VIEWS.entries()) {
+    $(`tab-${view}`).addEventListener("keydown", (event) => {
+      const step = { ArrowRight: 1, ArrowLeft: -1 }[event.key];
+      if (!step) return;
+      const next = VIEWS[(index + step + VIEWS.length) % VIEWS.length];
+      location.hash = next;
+      $(`tab-${next}`).focus();
+    });
+  }
   window.addEventListener("hashchange", () => show_view(view_from_hash()));
   $("tut-examples").addEventListener("click", (event) => {
     const chip = event.target.closest("[data-example]");
@@ -2273,12 +3190,439 @@ function start() {
   wire_controls();
   apply_language();
   render_odds_inputs();
+  start_main();
   update();
   show_view(view_from_hash());
 }
 
-start();
+// Main screen: the squid monitor (table), the hand's action bar, one big range grid with a compact legend, and a "More" drawer.
+"use strict";
 
+const MAIN_KEY = "squid-value-lab-main";
+// action shorthand by ranges_logic label key; open small and open big both read "Open <size>"
+const SHORTHAND = {
+  act_fold: "sh_fold", act_check: "sh_check", act_call: "sh_call", act_limp: "sh_limp", act_jam: "sh_jam",
+  act_open_small: "sh_open", act_open_big: "sh_open", act_iso: "sh_iso", act_3bet: "sh_3bet", act_4bet: "sh_4bet", act_5bet: "sh_5bet",
+};
+const main_ui = { mode: "squids", path: null, situation: null, realisation: null, filter: null, popover: null, blend_open: false, dataset: DATASETS[0].id };
+const NEAR_TIE_CHIPS = 15;
+const main_cells = [];
+const main_seats = [];
+let main_dealer;
+
+const main_state = (id) => RANGES.states.find((entry) => entry.id === id);
+const main_realisations = (id) => (RANGES.round3 ? ["calibrated"] : main_state(id).realisations || RANGES.realisations.filter((r) => RangesLogic.find_solve(RANGES, id, r)));
+const main_loaded = (id) => !RANGES.files || RANGES.solves.some((solve) => solve.state === id);
+/** Short name from who holds what: "Fresh round", "SB on 4, 7 on 0", "BTN on 4, two left: SB, STR". */
+function short_state(squids) {
+  if (!squids.some(Boolean)) return t("m_name_fresh");
+  const parts = RANGES.positions.flatMap((position, index) => (squids[index] >= 3 ? [t("m_name_on", { position, n: squids[index] })] : []));
+  const zeros = RANGES.positions.filter((_, index) => squids[index] === 0);
+  const last = zeros.length === 2 ? t("m_name_two_left", { a: zeros[0], b: zeros[1] }) : t("m_name_zeros", { n: zeros.length });
+  parts.push(parts.length && state.language === "en" ? last[0].toLowerCase() + last.slice(1) : last);
+  return parts.join(t("m_name_joiner"));
+}
+const main_fetching = new Set();
+const main_failed = new Set();
+
+/** Fetch one file once and hand the response to keep, then redraw. */
+async function main_fetch(url, keep) {
+  if (main_fetching.has(url) || main_failed.has(url)) return;
+  main_fetching.add(url);
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    await keep(response);
+  } catch (error) {
+    main_failed.add(url);
+  } finally {
+    main_fetching.delete(url);
+    if (current_view === "ranges") render_main();
+  }
+}
+
+// Round 3 data: a manifest, then each anchor's core (and deep) file on demand; the tapped state's solve is the weighted blend of what is loaded.
+const anchor_parts = new Map();  // "<anchor>.<part>" -> decoded nodes, oldest first
+const MAX_CACHED_PARTS = 24;  // 12 anchors, core and deep
+let round3_engine;
+
+/** Decoded nodes of one anchor part, or undefined while it is being fetched. */
+function anchor_part(id, part) {
+  const key = `${id}.${part}`;
+  if (!anchor_parts.has(key)) {
+    main_fetch(`${RANGES.files}${key}.bin`, async (response) => {
+      anchor_parts.set(key, RangesLogic.decode_part(await RangesLogic.gunzip(response), RANGES.nodes.filter((node) => node.part === part), RANGES.chips_per_bb));
+      while (anchor_parts.size > MAX_CACHED_PARTS) anchor_parts.delete(anchor_parts.keys().next().value);
+    });
+  }
+  return anchor_parts.get(key);
+}
+
+/** True once the tapped state's solve holds these parts (blended from its anchors and stored in RANGES.solves); starts any missing fetch. */
+function round3_ready(situation, parts) {
+  const have = RangesLogic.find_solve(RANGES, situation.id, "calibrated");
+  if (have && parts.every((part) => have.parts.includes(part))) return true;
+  const lists = parts.map((part) => situation.anchors.map(({ id }) => anchor_part(id, part)));
+  if (lists.flat().includes(undefined)) return false;
+  const weights = situation.anchors.map(({ weight }) => weight);
+  const gains = situation.anchors.map(({ id }) => RANGES.anchors.find((anchor) => anchor.id === id).gain_bb);
+  const solve = { state: situation.id, realisation: "calibrated", parts, exploitability_bb: Math.max(...gains), nodes: lists.flatMap((list) => RangesLogic.blend_nodes(list, weights)) };
+  RANGES.solves = [...RANGES.solves.filter((other) => other.state !== situation.id), solve].slice(-8);
+  return true;
+}
+
+/** True once a situation's solve holds these parts; otherwise starts the fetches it needs. */
+function main_ready(situation, parts) {
+  if (RANGES.round3) return round3_ready(situation, parts);
+  if (!main_loaded(situation.id)) main_fetch(`${RANGES.files}${situation.id}.json`, async (response) => RANGES.solves.push(...(await response.json()).solves));
+  return main_loaded(situation.id);
+}
+
+// The table's situation in the data's terms: posts sit just before the first actor, as in payoffs.seat_of_position.
+const num_posts = () => Object.keys(RANGES.blinds || { SB: 0.5, BB: 1 }).length;
+const seat_of = (position_index) => (state.button + 1 + num_posts() + position_index) % NUM_PLAYERS;
+const position_at_seat = (seat) => RANGES.positions[(seat - state.button - 1 - num_posts() + 2 * NUM_PLAYERS) % NUM_PLAYERS];
+const counts_by_position = () => RANGES.positions.map((_, index) => state.counts[seat_of(index)]);
+const my_position = () => position_at_seat(state.me);
+
+/** The situation to draw: round 3, the tapped squids with how they are solved ({mode, anchors, gap}); older data, the solved state equal to them or the nearest one. */
+function solved_situation(problem) {
+  const squids = counts_by_position();
+  if (!RANGES.round3) {
+    const { state: nearest, exact } = RangesLogic.nearest_state(RANGES, squids);
+    return { id: nearest.id, squids: nearest.squids, exact };
+  }
+  round3_engine = round3_engine || SquidEngine.create_engine("uniform", 0);
+  const solved = RANGES.anchors && !problem ? RangesLogic.pick_blend(RANGES.anchors, RangesLogic.squid_offsets(round3_engine, squids, num_posts()), squids) : {};
+  return { id: squids.join("-"), squids, ...solved };
+}
+
+// The hand so far, using the betting rules in ranges_logic.js with this dataset's positions, blinds and stack.
+const main_rules = () => RangesLogic.hand_rules(RANGES);
+const replay = (path) => RangesLogic.replay(main_rules(), path);
+const next_to_act = RangesLogic.next_to_act;
+const spot_of = RangesLogic.spot_of;
+const path_to = (spot) => RangesLogic.path_to(main_rules(), spot);
+
+// Sizes are in the data set's big blinds (25 chips in the real game, 50 in round 1); the bounty engine works in 50-chip BB.
+const data_chips_per_bb = () => RANGES.chips_per_bb || CHIPS_PER_BB;
+/** A bet size in the current unit, compact: "600" chips or "24bb". */
+const short_size = (bb) => (state.unit === "chips" ? Math.round(bb * data_chips_per_bb()).toLocaleString("en-US") : `${Number(bb.toFixed(2))}bb`);
+/** A seat's bounty (engine BB) on the same scale as the sizes. */
+const bounty_text = (engine_bb) => short_size((engine_bb * CHIPS_PER_BB) / data_chips_per_bb());
+
+/** A signed EV in the current unit, from data big blinds: "+120", "−25", "0". */
+const ev_text = (bb) => `${bb > 0.0001 ? "+" : bb < -0.0001 ? "−" : ""}${short_size(Math.abs(bb))}`;
+
+/** Shorthand for a step already taken ("Open 125", "3-bet", "Limp"), from the steps before it. */
+function step_label(step, before) {
+  const raises = before.filter((other) => other.kind === "raise").length;
+  const limped = before.some((other) => other.kind === "call");
+  if (step.kind === "raise") {
+    const key = raises === 0 ? (limped ? "sh_iso" : "sh_open") : ["", "sh_3bet", "sh_4bet"][raises] || "sh_5bet";
+    return t(key, { size: step.to_bb === null || step.to_bb === undefined ? "" : short_size(step.to_bb) }).trim();
+  }
+  if (step.kind === "call") return t(raises === 0 ? "sh_limp" : "sh_call");
+  return t(`sh_${step.kind === "jam" ? "jam" : step.kind}`);
+}
+
+/** Shorthand labels for a node's actions. */
+const node_labels = (node) => RangesLogic.action_labels(node).map((label) => t(SHORTHAND[label.key], { size: label.to_bb === undefined ? "" : short_size(label.to_bb) }).trim());
+
+// The squid monitor: the shared 8-seat table, each seat with its position, squids and bounty.
+function build_monitor() {
+  const wrap = $("m-table-wrap");
+  for (const seat of SEATS) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "seat";
+    button.id = `m-seat-${seat}`;
+    const point = table_point(seat, 39, 37);
+    button.style.left = `${point.left}%`;
+    button.style.top = `${point.top}%`;
+    button.addEventListener("click", () => tap_monitor(seat));
+    wrap.appendChild(button);
+    main_seats.push(button);
+  }
+  main_dealer = document.createElement("div");
+  main_dealer.className = "dealer";
+  main_dealer.textContent = "D";
+  main_dealer.setAttribute("aria-hidden", "true");
+  wrap.appendChild(main_dealer);
+}
+
+function tap_monitor(seat) {
+  if (main_ui.mode === "squids") state.counts[seat] = (state.counts[seat] + 1) % 5;
+  if (main_ui.mode === "button") state.button = seat;
+  if (main_ui.mode === "me") state.me = seat;
+  main_ui.mode = "squids";
+  main_ui.path = null;
+  update();
+}
+
+/** The felt's text: the state's name, and in round 3 the badge (Solved, Blended from N nearby solves, Rough) that opens the list of anchors behind it. */
+function felt_html(situation) {
+  const name = `<span class="felt-line">${RANGES.round3 || situation.exact ? short_state(situation.squids) : t("m_nearest", { name: short_state(situation.squids) })}</span>`;
+  if (!situation.mode) return name;
+  const away = (gap) => `${short_size(gap / data_chips_per_bb())}${state.unit === "chips" ? ` ${t("unit_chips")}` : ""}`;
+  const label = { solved: t("m_solved"), blend: situation.anchors.length === 1 ? t("m_blended_one") : t("m_blended", { n: situation.anchors.length }), rough: t("m_rough", { gap: away(situation.gap) }) }[situation.mode];
+  const holders = (squids) => (squids.some(Boolean) ? RANGES.positions.flatMap((position, seat) => (squids[seat] ? [`${position} ${squids[seat]}`] : [])).join(" ") : t("m_name_fresh"));
+  const rows = situation.anchors.map(({ id, weight }) => `${holders(RANGES.anchors.find((anchor) => anchor.id === id).squids)} ${percent(weight)}`);
+  if (situation.mode === "blend") rows.push(away(situation.gap));
+  return `${name}<button type="button" class="felt-pill" id="m-pill" aria-expanded="${main_ui.blend_open}"><i class="tier-dot mode-${situation.mode}"></i>${label}</button>`
+    + (main_ui.blend_open && situation.mode !== "solved" ? `<span class="felt-sub">${rows.join(" · ")}</span>` : "");
+}
+
+function render_monitor(situation, problem) {
+  const antes = problem ? null : SEATS.map((seat) => current_engine().implicit_ante(state.counts, state.button, seat));
+  for (const seat of SEATS) {
+    const count = state.counts[seat];
+    const button = main_seats[seat];
+    button.className = `seat${seat === state.me ? " is-me" : ""}${count === 3 ? " at-three" : ""}${count >= 4 ? " at-four" : ""}`;
+    button.innerHTML = `${seat === state.me ? `<span class="seat-tag">${t("me_tag")}</span>` : ""}<span class="seat-pos">${position_at_seat(seat)}</span>`
+      + `<span class="seat-count">${count}</span><span class="seat-bounty">${antes ? bounty_text(antes[seat]) : "–"}</span>`;
+    button.setAttribute("aria-label", t("seat_aria", { seat: seat_label(seat), position: position_at_seat(seat), squids: squids_text(count) }));
+  }
+  const chip = table_point(state.button, 23, 18);
+  main_dealer.style.left = `${chip.left}%`;
+  main_dealer.style.top = `${chip.top}%`;
+  $("m-felt").innerHTML = problem ? `<span class="felt-line">${t("m_impossible")}</span>` : felt_html(situation);
+  for (const mode of ["squids", "button", "me"]) $(`m-mode-${mode}`).checked = main_ui.mode === mode;
+}
+
+// The action bar: one chip per step taken (tap to go back), then the current decision as big buttons.
+function render_bar(path, actor, node, over) {
+  const chips = path.map((step, index) => `<li><button type="button" class="m-step${step.kind === "fold" ? " is-fold" : ""}" id="m-step-${index}" data-step="${index}">`
+    + `<b>${step.seat}</b> ${step_label(step, path.slice(0, index))}</button></li>`);
+  const current = actor === null ? `<li class="m-step is-end">${t("m_flop")}</li>` : `<li class="m-step is-current"><b>${actor}</b> ?</li>`;
+  $("m-bar").innerHTML = [...chips, current].join('<li class="m-sep" aria-hidden="true">›</li>');
+  const groups = node ? RangesLogic.action_groups(node) : [];
+  const labels = node ? node_labels(node) : [];
+  $("m-actions").innerHTML = actor === null ? "" : node
+    ? node.actions.map((action, index) => `<button type="button" class="m-act grp-edge-${groups[index]}" id="m-act-${index}" data-act="${index}">${labels[index]}</button>`).join("")
+    : `<button type="button" class="m-act grp-edge-fold" id="m-act-fold" data-fold="1">${t("sh_fold")}</button>`;
+  $("m-missing").hidden = !(over || (actor !== null && !node));
+  $("m-missing").textContent = over ? t("m_over") : t("m_rare");
+  $("m-locked").hidden = !(node && node.locked);
+  $("m-locked").textContent = t("m_locked", { cap: RANGES.entrant_cap || 4 });
+}
+
+// The grid: one button per class, its background a stack of action bands scaled by range weight.
+function build_main_grid() {
+  const grid = $("m-grid");
+  RANGES.classes.forEach((name, index) => {
+    const cell = document.createElement("button");
+    cell.type = "button";
+    cell.className = "rg-cell";
+    cell.id = `m-cell-${index}`;
+    cell.dataset.index = String(index);
+    cell.innerHTML = `<span>${name}</span>`;
+    grid.appendChild(cell);
+    main_cells.push(cell);
+  });
+}
+
+function cell_background(node, index, groups) {
+  const weight = RangesLogic.range_weight(node, index);
+  const by_group = Object.fromEntries(RangesLogic.GROUPS.map((group) => [group, 0]));
+  node.strategy[index].forEach((permille, action) => { by_group[groups[action]] += permille / 10; });
+  let top = 0;
+  const stops = [];
+  for (const group of RangesLogic.GROUPS) {
+    const height = by_group[group] * weight;
+    if (height <= 0) continue;
+    const colour = main_ui.filter && main_ui.filter !== group ? "var(--rg-muted)" : `var(--act-${group.replace("_", "-")})`;
+    stops.push(`${colour} ${top}% ${top + height}%`);
+    top += height;
+  }
+  if (top < 100) stops.push(`transparent ${top}% 100%`);
+  return `linear-gradient(to bottom, ${stops.join(", ")}), var(--rg-empty)`;
+}
+
+/** "Mostly Open 125 (70%)": the simple decision for one class. */
+function main_decision(node, index) {
+  const labels = node_labels(node);
+  const { kind, top, second } = RangesLogic.decision(node, index);
+  if (kind === "mixed") return t("rg_mixed", { a: labels[top.action], pa: percent(top.share), b: labels[second.action], pb: percent(second.share) });
+  return t(kind === "always" ? "rg_always" : "rg_mostly", { action: labels[top.action], share: percent(top.share) });
+}
+
+/** The legend's EV note: "—" (with the reason on hover) for an action taken under 1% of the time, since its average is mostly premiums mixing in. */
+const legend_ev = (frequency, ev) => (ev === null ? "" : frequency < 0.01 ? `<small title="${t("m_ev_rare")}">${t("m_ev")} —</small>` : `<small>${t("m_ev")} ${ev_text(ev)}</small>`);
+
+function render_grid(node, flags, situation) {
+  $("m-range").hidden = !node;
+  if (!node) return;
+  const groups = RangesLogic.action_groups(node);
+  main_cells.forEach((cell, index) => {
+    cell.style.background = cell_background(node, index, groups);
+    cell.classList.toggle("flag", Boolean(flags[index]));
+    cell.classList.toggle("selected", main_ui.popover === index);
+    cell.setAttribute("aria-label", `${RANGES.classes[index]}: ${main_decision(node, index)}`);
+  });
+  const tier = node.reliability ? node.reliability.tier : null;
+  $("m-grid").classList.toggle("is-rare", tier === "unreliable" || situation.mode === "rough");
+  $("m-grid").classList.toggle("is-sample", RANGES.sample);
+  const solve = RangesLogic.find_solve(RANGES, main_ui.situation, main_ui.realisation);
+  const accuracy = `${short_size(100 * solve.exploitability_bb)}${state.unit === "chips" ? ` ${t("unit_chips")}` : ""}`;
+  const details = node.reliability ? t("m_badge_title", { reach: percent(node.reliability.reach), accuracy }) : "";
+  $("m-badge").innerHTML = tier ? `<i class="tier-dot tier-${tier}"></i>${t(`m_tier_${tier}`)}` : "";
+  $("m-badge").title = details;
+  $("m-legend").innerHTML = RangesLogic.summary(node).map(({ frequency, ev }, action) => `<li><button type="button" class="m-key" id="m-key-${action}" data-group="${groups[action]}" aria-pressed="${main_ui.filter === groups[action]}">`
+    + `<i class="swatch grp-${groups[action]}"></i>${node_labels(node)[action]}<b>${percent(frequency)}</b>${legend_ev(frequency, ev)}</button></li>`).join("");
+  render_popover(node);
+}
+
+/** True when the hand's two best actions are within 15 chips of EV. */
+function is_near_tie(node, index) {
+  if (!node.ev_bb) return false;
+  const [best, second] = [...node.ev_bb[index]].sort((a, b) => b - a);
+  return second !== undefined && best - second < NEAR_TIE_CHIPS / data_chips_per_bb();
+}
+
+function render_popover(node) {
+  const index = main_ui.popover;
+  $("m-pop").hidden = index === null || !node;
+  if (index === null || !node) return;
+  const groups = RangesLogic.action_groups(node);
+  const labels = node_labels(node);
+  const rows = node.actions.map((_, action) => `<div class="m-pop-row"><i class="swatch grp-${groups[action]}"></i><span>${labels[action]}</span><b>${percent(node.strategy[index][action] / 1000)}</b>${node.ev_bb ? `<small>${t("m_ev")} ${ev_text(node.ev_bb[index][action])}</small>` : ""}</div>`).join("");
+  $("m-pop").innerHTML = `<button type="button" class="m-pop-close" id="m-pop-close" aria-label="${t("m_close")}">×</button>`
+    + `<p class="m-pop-head"><b>${RANGES.classes[index]}</b> ${main_decision(node, index)}</p>${rows}${is_near_tie(node, index) ? `<p class="m-pop-tie">≈ ${t("m_tie")}</p>` : ""}`;
+}
+
+// The "More" drawer: postflop assumption and one line per table note.
+function render_more(situation) {
+  for (const realisation of RANGES.realisations) {
+    $(`m-real-${realisation}`).checked = realisation === main_ui.realisation;
+    $(`m-real-${realisation}`).disabled = !main_realisations(situation.id).includes(realisation);
+  }
+  const { edge, player_on_four: four, last_two: last, walk_denial: walk } = RANGES.panels;
+  const sample = (panel) => (panel.sample ? ` <span class="rg-sample-tag">${t("rg_sample_tag")}</span>` : "");
+  const mean = (field) => {
+    const value = Math.round(four.rows.reduce((total, row) => total + row[field], 0) / four.rows.length);
+    return `${value > 0 ? "+" : value < 0 ? "−" : ""}${Math.abs(value)}`;
+  };
+  const zero = last.rows.find((row) => row.squids === 0) || last.rows[0];
+  const closer = RANGES.panels.closer || "BB";
+  const notes = [
+    [four, t("m_note_four", { closer, three_bet: mean("three_bet_extra_pp"), call: mean("bb_call_extra_pp") })],
+    [last, t("m_note_last", { closer, position: zero.position, plays: zero.plays_pct, defend: last.bb_defend_pct })],
+    [walk, t("m_note_walk", { closer, opens: walk.rows.map((row) => `${row.position} ${row.open_pct}%`).join(" · ") })],
+    [edge, t("m_note_edge", { edge: amount(edge.bb_per_100) })],
+  ];
+  $("m-notes").innerHTML = notes.map(([panel, text]) => `<li>${text}${sample(panel)}</li>`).join("");
+}
+
+// Data sets: the real game (single straddle, default) and round 1, switched from More.
+const has_dataset = (id) => DATASETS.some((entry) => entry.id === id);
+
+function use_dataset(id) {
+  RANGES = DATASETS.find((entry) => entry.id === id) || DATASETS[0];
+  Object.assign(main_ui, { dataset: RANGES.id, path: null, situation: null, popover: null, filter: null });
+  render_odds_inputs();
+  update();
+}
+
+function render_dataset_controls() {
+  $("m-model-row").hidden = !(has_dataset("single_straddle") && has_dataset("round1"));
+  $("m-model-real").checked = RANGES.id === "single_straddle";
+  $("m-model-round1").checked = RANGES.id === "round1";
+}
+
+/** Replace the bar and grid with one line (loading, failed or impossible). */
+function show_message(text) {
+  $("m-bar").innerHTML = `<li class="m-step is-end">${text}</li>`;
+  $("m-actions").innerHTML = "";
+  $("m-range").hidden = true;
+}
+
+function render_main() {
+  const problem = state_problem(state.counts);
+  render_dataset_controls();
+  if (RANGES.round3 && !RANGES.anchors) {
+    main_fetch(`${RANGES.files}manifest.json`, async (response) => {
+      const manifest = await response.json();
+      Object.assign(RANGES, manifest, { part_of: Object.fromEntries(manifest.nodes.map((node) => [node.spot, node.part])) });
+    });
+  }
+  const situation = solved_situation(problem);
+  $("m-model").hidden = !RANGES.model;
+  if (RANGES.model) $("m-model").textContent = RANGES.model[state.language] || RANGES.model.en;
+  $("m-sample").hidden = !RANGES.sample;
+  render_monitor(situation, problem);
+  const waiting = () => show_message(main_failed.size ? t("rg_load_failed") : t("rg_loading"));
+  if (RANGES.round3 && (problem || !RANGES.anchors)) return problem ? show_message(t("m_impossible")) : waiting();
+  if (!main_ready(situation, ["core"])) return waiting();
+  const realisations = main_realisations(situation.id);
+  if (!realisations.includes(main_ui.realisation)) main_ui.realisation = realisations[0];
+  const solve = RangesLogic.find_solve(RANGES, situation.id, main_ui.realisation);
+  if (main_ui.situation !== situation.id || main_ui.path === null) main_ui.path = [];  // every squid setup starts with UTG+1 to act
+  main_ui.situation = situation.id;
+  const hand = replay(main_ui.path);
+  const actor_index = next_to_act(hand);
+  const actor = actor_index === null ? null : RANGES.positions[actor_index];
+  const spot_here = actor === null ? null : spot_of(main_ui.path, actor);
+  if (RANGES.round3 && RANGES.part_of[spot_here] === "deep" && !main_ready(situation, ["core", "deep"])) return waiting();
+  const node = actor === null ? null : RangesLogic.find_node(solve, spot_here);
+  render_bar(main_ui.path, actor, node, actor === null);
+  const spot = node ? node.spot : null;
+  const bracket = (realisation) => spot && RangesLogic.find_node(RangesLogic.find_solve(RANGES, situation.id, realisation), spot);
+  render_grid(node, RangesLogic.bracket_flags(bracket("low"), bracket("high")), situation);
+  render_more(situation);
+  try {
+    localStorage.setItem(MAIN_KEY, JSON.stringify({ realisation: main_ui.realisation, dataset: main_ui.dataset }));
+  } catch (error) { /* storage blocked: nothing to remember */ }
+}
+
+function wire_main() {
+  const on_click = (id, selector, handler) => $(id).addEventListener("click", (event) => {
+    const target = event.target.closest(selector);
+    if (target) handler(target);
+  });
+  on_click("m-bar", "[data-step]", (target) => { main_ui.path = main_ui.path.slice(0, Number(target.dataset.step)); main_ui.popover = null; render_main(); });
+  on_click("m-actions", "[data-act]", (target) => {
+    const node = RangesLogic.find_node(RangesLogic.find_solve(RANGES, main_ui.situation, main_ui.realisation),
+      spot_of(main_ui.path, RANGES.positions[next_to_act(replay(main_ui.path))]));
+    const action = node.actions[Number(target.dataset.act)];
+    main_ui.path = [...main_ui.path, { seat: RangesLogic.spot_steps(node.spot).actor, kind: action.kind, to_bb: action.to_bb ?? null }];
+    main_ui.popover = null;
+    main_ui.filter = null;
+    render_main();
+  });
+  on_click("m-actions", "[data-fold]", () => {
+    main_ui.path = [...main_ui.path, { seat: RANGES.positions[next_to_act(replay(main_ui.path))], kind: "fold" }];
+    render_main();
+  });
+  on_click("m-felt", "#m-pill", () => { main_ui.blend_open = !main_ui.blend_open; render_main(); });
+  on_click("m-legend", "[data-group]", (target) => { main_ui.filter = main_ui.filter === target.dataset.group ? null : target.dataset.group; render_main(); });
+  on_click("m-grid", ".rg-cell", (target) => { main_ui.popover = main_ui.popover === Number(target.dataset.index) ? null : Number(target.dataset.index); render_main(); });
+  on_click("m-pop", "#m-pop-close", () => { main_ui.popover = null; render_main(); });
+  $("m-reset").addEventListener("click", () => {
+    state.counts = Array(NUM_PLAYERS).fill(0);
+    main_ui.path = null;
+    update();
+  });
+  for (const mode of ["squids", "button", "me"]) $(`m-mode-${mode}`).addEventListener("change", () => { main_ui.mode = mode; });
+  for (const realisation of RANGES.realisations) $(`m-real-${realisation}`).addEventListener("change", () => { main_ui.realisation = realisation; render_main(); });
+  $("m-model-real").addEventListener("change", () => use_dataset("single_straddle"));
+  $("m-model-round1").addEventListener("change", () => use_dataset("round1"));
+}
+
+function start_main() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(MAIN_KEY) || "null");
+    if (saved && RANGES.realisations.includes(saved.realisation)) main_ui.realisation = saved.realisation;
+    if (saved && has_dataset(saved.dataset)) RANGES = DATASETS.find((entry) => entry.id === saved.dataset);
+    main_ui.dataset = RANGES.id;
+  } catch (error) { /* storage blocked or corrupt: keep the defaults */ }
+  build_monitor();
+  build_main_grid();
+  wire_main();
+}
+
+start();
 </script>
+
 </body>
 </html>

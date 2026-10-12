@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Squid preflop cheat sheet v2 (round 3: head fish, single straddle)</title>
+<style>
+body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.55 "Public Sans", "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
+:root { --bg: #edf0ed; --ink: #15201a; --muted: #45534a; --accent: #2a6bc4; --code: #e3e8e4; }
+@media (prefers-color-scheme: dark) { :root { --bg: #101713; --ink: #e5ece7; --muted: #a9b7ae; --accent: #4f8ce0; --code: #2d3a32; } }
+main { max-width: 760px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 26px; line-height: 1.2; } h2 { font-size: 18px; margin: 28px 0 6px; } li { margin: 6px 0; }
+nav { color: var(--muted); font-size: 14px; } a { color: var(--accent); } code { background: var(--code); padding: 1px 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+<nav><a href="./">&larr; Squid Value Lab</a> &middot; <a href="cheat-sheet-zh.html">中文</a></nav>
+<h1>Squid preflop cheat sheet v2 (round 3: head fish, single straddle)</h1>
+<p>25/25 + a 50 straddle (STR) every hand, 30,000 stacks, rake on. Opens are 600 or 900. (n) is your squid bounty in chips: what winning this pot's squid is worth to you, against an average other player winning it. First-in % assume it's folded to you; "play" means limp or open. Each situation is weighted by how often it comes up (its share of all hands is in the heading). <strong>[R]</strong> robust: the advice still holds if every EV in the spot moves by 1 BB (25 chips). <strong>[M]</strong> model-dependent: a near tie, a rare spot, or a defence number. Source: <code>research/round3/cheat_sheet_v2_output.txt</code> (2,264 solves).</p>
+<h2>Fresh round (1,043): 11.5% of hands</h2>
+<ul>
+<li>The head fish makes the first pot worth 1,043: its winner gains 913 for the round, and every other seat loses 130. [R]</li>
+<li>UTG+1 to CO: limp, don't open. Opening costs 108–146 a hand on average against limping. [R]</li>
+<li>Play 38% UTG+1, 43% LJ, 51% HJ, 62% CO, all limps. The cut-off is soft: at UTG+1, a 25-chip error moves it anywhere from 22% to 64%. [M]</li>
+<li>UTG+1 limps 22+, A2s+, K2s+, Q6s+, J7s+, T7s+, 97s+, 87s, 76s, A2o+, K8o+, Q9o+, J9o+. [M]</li>
+<li>BTN: play every hand [R]; open 93%, at 900 with 69% of hands [M].</li>
+<li>Facing a BTN 600 open, the STR never folds (3-bets 9%) and the BB folds 34%. [M] rare (0.3% / 0.8% of hands)</li>
+</ul>
+<h2>After the head fish, one player on 2 (zeros 674, the player on 2 880): 11.5%</h2>
+<ul>
+<li>Zeros tighten a little: UTG+1 plays 28% (38% fresh), dropping A2o–A6o, K2s, K8o, J7s, 97s, 87s and 76s. [M]</li>
+<li>Still limp, don't open from UTG+1 to CO. [R] The BTN opens 92%, now mostly 600 (900 with only 38%). [M]</li>
+<li>The player on 2 plays as in a fresh round: 39% UTG+1, 61% CO, and opens 99% on the BTN. [M]</li>
+</ul>
+<h2>Mid-round, holders vs zeros: 42% of hands, the most common spot</h2>
+<ul>
+<li>On 0 (786): play 38% UTG+1, 43% LJ, 51% HJ, 63% CO, mostly limps; the 4–12% who open always use 900. [M]</li>
+<li>On 0, BTN: play every hand [R]; open 98%, at 900 with 65% [M]. In the straddle, fold only 8–10% to a BTN 600 open. [M]</li>
+<li>Holding 1–2 (397): play about half as much: 19% UTG+1 (55+, A7s+, A5s, K9s+, Q9s+, JTs, ATo+, KTo+, QTo+), 37% CO. [M]</li>
+<li>Holding, BTN: fold the worst 16% and open 64%, mostly 600. [M]</li>
+<li>Holding, in the straddle: fold 58% to a holder's BTN open but only 28% to a zero's. In the BB: 75% and 57%. [M]</li>
+</ul>
+<h2>Someone on 3: 20.5% of hands</h2>
+<ul>
+<li>On 3 yourself (968, from 429 to 1,616): play like a zero, a bit looser: 46% UTG+1, adding Q2s–Q4s, J4s–J6s, Q8o and K7o. [M]</li>
+<li>Zeros (943) play as mid-round zeros: 40% UTG+1, 67% CO, and the BTN opens 96%. Holders (363) tighten to 16% at UTG+1. [M]</li>
+</ul>
+<h2>Someone on 4: 5.5% of hands</h2>
+<ul>
+<li>On 4 (2,630, from 1,907 to 3,594): never fold first in from UTG+1 to the SB (2% or less). [R] Early, mostly limp: UTG+1 limps 75% and opens 22% (almost always 900); the CO opens 37%. [M]</li>
+<li>On 4, BTN: open every hand to 900. [R] In the STR or BB, never fold to a BTN 600 open. [M]</li>
+<li>On 0 (1,067): play as fresh: 38% UTG+1, 63% CO, and the BTN opens 84%. [M] Against the hunter's BTN 600 open, the STR folds 7% and 3-bets 17%. [M] very rare</li>
+<li>Holding (390): you're a bystander, so tighten to 27% at UTG+1. [M]</li>
+</ul>
+<h2>Last two zeros (Z = 2): 9.2% of hands</h2>
+<ul>
+<li>You're one of them (933 with 7–8 squids out, 1,100 on the last squid): play 68–69% UTG+1 (opening 18–19%, always 900), 79–82% HJ, 86% CO. [M]</li>
+<li>The BTN opens 98–100%, almost all to 900. [R] The SB opens 16–17%. [M]</li>
+<li>Facing the other zero's BTN 600 open, the STR folds 0–2% and 3-bets 19%. Against a holder's open, the STR folds 4% and the BB 34–36%. [M]</li>
+<li>7–8 out and the last squid play the same, although the bounty differs (933 vs 1,100). [M]</li>
+<li>You hold (203–240): fold most hands: play 15–18% at UTG+1 (66+, A8s+, K9s+, QTs+, JTs, ATo+, KJo+, QJo), and fold 18–21% on the BTN. [M]</li>
+<li>Holding, facing a holder's BTN 600 open: the STR folds 66–71% and the BB 81–84%. [M]</li>
+<li>One zero left never plays a hand: the round settles at once. [R]</li>
+</ul>
+<h2>Honest limits</h2>
+<ul>
+<li>Postflop is not solved. Every EV leans on our equity-realisation model.</li>
+<li>We assume a single straddle every hand. The 100 double straddle comes in about 40–50% of real hands, and we have not solved it under the head fish.</li>
+<li>Early-seat limp vs open is a near tie for premiums. At UTG+1, AA is worth 2,261 limped against 2,270 opened, so opening AA–QQ or AK costs under 30 chips. A cold-started solve of a nearby state did open some premiums early.</li>
+<li>SB/BB first-in spots are rare and less certain: in a fresh round it is almost never folded to the SB (0.00% of hands). Every defence number sits at a spot reached in under 7% of hands.</li>
+<li>14% of hands have no close solve (the page shows them as "rough"): about 7% in the on-3 states and 4% with someone on 4, where only a solve one squid off may stand in. Solve accuracy: median 4.8 chips a hand, worst 10.0.</li>
+</ul>
+</main>
+</body>
+</html>
